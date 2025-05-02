@@ -10,7 +10,7 @@
 		"biome:check": "biome check --write --unsafe ."
 	},
 	"dependencies": {
-		"next": "15.3.1",
+		"next": "15.4.0-canary.18",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0"
 	},
