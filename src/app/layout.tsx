@@ -25,20 +25,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-svh bg-background font-sans",
           geistSans.variable,
           geistMono.variable,
           "antialiased"
         )}
       >
-        <div vaul-drawer-wrapper="">
-          <div className="relative flex min-h-svh flex-col bg-background">
-            <Providers>{children}</Providers>
-          </div>
-        </div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
