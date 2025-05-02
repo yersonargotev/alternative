@@ -1,6 +1,8 @@
+import Providers from "@/app/providers";
+import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +27,16 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`min-h-svh bg-background font-sans ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(
+          "min-h-svh bg-background font-sans",
+          geistSans.variable,
+          geistMono.variable,
+          "antialiased"
+        )}
       >
         <div vaul-drawer-wrapper="">
           <div className="relative flex min-h-svh flex-col bg-background">
-            {children}
+            <Providers>{children}</Providers>
           </div>
         </div>
       </body>
