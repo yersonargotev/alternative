@@ -1,41 +1,39 @@
-import Image from "next/image";
+import { SparkyDevsIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-export default async function LandingPage() {
+export default function LandingPage() {
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <div className="absolute top-0 right-0 left-0 z-50">
-        Anuncio
-      </div>
-      {/* Background Image */}
-      <Image
-        src="/vercel.svg"
-        alt="Light ray background"
-        width={2048}
-        height={2048}
-        className="-top-20 pointer-events-none absolute right-0 left-0 z-0 mx-auto hidden h-full w-full select-none md:block"
-        priority
-      />
+      {/* Header */}
+      <header className="sticky top-0 z-20 w-full border-border/40 border-b bg-background/80 backdrop-blur-sm">
+        <div className="container mx-auto flex h-16 max-w-2xl items-center justify-between">
+          <div className="flex items-center gap-2">
+            <SparkyDevsIcon className="size-10" />
+            <span className="font-semibold">FactuStorm</span>
+          </div>
+          <nav
+            className={cn(
+              "z-50 flex w-full flex-col items-center gap-2 pb-8 md:flex md:h-20 md:w-auto md:flex-row md:p-0"
+            )}
+          >
+            <Link href="/dashboard">
+              <Button variant="default">Dashboard</Button>
+            </Link>
+            <Link href="/plans">
+              <Button variant="ghost">Planes</Button>
+            </Link>
+            <Link href="/login">
+              <Button variant="ghost">Iniciar Sesión</Button>
+            </Link>
+          </nav>
+        </div>
+      </header>
 
       {/* Main Content */}
       <main className="relative z-10 flex h-full flex-1 items-center justify-center overflow-auto">
         <div className="container mx-auto my-auto flex h-full max-w-2xl flex-col items-center justify-center">
-          {/* YouTube Video Link */}
-          <div className="relative mb-6">
-            <div
-              className="absolute inset-[-8px] animate-[pulse_3s_ease-in-out_infinite] rounded-full bg-red-500/30 blur-lg"
-              style={{ transform: "scale(1.2)" }}
-            />
-            <a
-              href="https://www.youtube.com/@SparkyDevs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative block transition-transform hover:scale-105"
-              aria-label="Watch us win at Cursor Hackathon"
-            >
-              YouTube
-            </a>
-          </div>
-
           {/* App Title */}
           <div className="mb-8 flex items-center justify-center gap-4 px-4 text-center">
             <div className="flex flex-col gap-1">
@@ -80,15 +78,6 @@ export default async function LandingPage() {
           </div>
           <div className="text-muted-foreground text-xs">
             Built by{" "}
-            <a
-              href="https://github.com/SparkyDevs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground"
-            >
-              SparkyDevs
-            </a>{" "}
-            &{" "}
             <a
               href="https://github.com/SparkyDevs"
               target="_blank"
