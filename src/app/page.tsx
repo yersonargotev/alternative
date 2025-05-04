@@ -1,3 +1,4 @@
+import Clerk from "@/components/clerk";
 import { SparkyDevsIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,9 +25,7 @@ export default function LandingPage() {
             <Link href="/plans">
               <Button variant="ghost">Planes</Button>
             </Link>
-            <Link href="/login">
-              <Button variant="ghost">Iniciar Sesión</Button>
-            </Link>
+            <Clerk />
           </nav>
         </div>
       </header>
