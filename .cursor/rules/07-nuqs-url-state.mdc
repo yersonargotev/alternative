@@ -1,0 +1,48 @@
+---
+description: 
+globs: **/*.tsx
+alwaysApply: false
+---
+- **Uso Principal:**
+  - Utiliza `nuqs` para sincronizar el estado de los componentes React con los parámetros de búsqueda (query params) de la URL.
+  - Ideal para filtros, paginación, tabs, o cualquier estado que quieras que sea compartible/marcable vía URL.
+
+- **Hooks Principales:**
+  - `useQueryState`: para un solo parámetro de búsqueda.
+  - `useQueryStates`: para múltiples parámetros de búsqueda gestionados como un objeto.
+
+- **Parsers y Tipado Fuerte:**
+  - Utiliza los parsers incorporados (`parseAsInteger`, `parseAsString`, `parseAsBoolean`, `parseAsFloat`, `parseAsArrayOf`) o crea parsers personalizados (puedes integrar Zod aquí) para asegurar el tipado y la validación de los parámetros.
+  ```typescript
+  import { useQueryState, parseAsInteger, parseAsString } from 'nuqs';
+
+  function ProductFilters() {
+    const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1));
+    const [searchTerm, setSearchTerm] = useQueryState('q', parseAsString.withDefault(''));
+    // ...
+  }
+  ```
+
+- **Opciones de Actualización:**
+  - `history`: `'push'` (default) o `'replace'`. Usa `'replace'` para cambios frecuentes que no deberían llenar el historial del navegador (e.g., input de búsqueda mientras se escribe).
+  - `shallow`: `true` (default en App Router) para actualizaciones solo del cliente sin re-fetching de datos del servidor de Next.js, a menos que el cambio de URL lo requiera por sí mismo.
+  - `throttleMs`: para limitar la frecuencia de actualizaciones de la URL (e.g., para inputs de texto).
+  - `clearOnDefault`: `true` para remover el parámetro de la URL cuando su valor es el default.
+
+- **Uso en Server Components (Lectura):**
+  - Para leer parámetros de búsqueda en Server Components, `nuqs` provee utilidades en `nuqs/server`.
+  - Puedes usar `createSearchParamsCache` y los parsers del lado del servidor para acceder a los valores de forma type-safe.
+  ```typescript
+  // app/my-page/page.tsx (Server Component)
+  import { parseAsString } from 'nuqs/server'; // Nota: nuqs/server
+
+  export default async function MyPage({ searchParams }: { searchParams: Record<string, string> }) {
+    const searchTerm = parseAsString('q').parse(searchParams.q); // o searchParams directamente
+    // ...
+  }
+  ```
+
+- **Consideraciones:**
+  - No uses `nuqs` para estado sensible o datos que no deben ser expuestos en la URL.
+  - Ten en cuenta el impacto en SEO: URLs con estado pueden ser indexadas. Usa URLs canónicas si es necesario.
+

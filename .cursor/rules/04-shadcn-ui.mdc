@@ -1,0 +1,27 @@
+---
+description: 
+globs: src/components/ui/**/*.tsx
+alwaysApply: false
+---
+- **Instalación:**
+  - Añade componentes individualmente usando la CLI de Shadcn/UI: `npx shadcn-ui@latest add [component-name]`.
+
+- **Uso y Personalización:**
+  - Los componentes de Shadcn/UI se copian a tu codebase (generalmente en `components/ui`).
+  - Personaliza los componentes directamente editando su código fuente o aplicando clases de Tailwind.
+  - Sigue la estructura y convenciones de los componentes existentes de Shadcn/UI al crear nuevos componentes basados en ellos.
+  - Aprovecha `cva` (Class Variance Authority) y `tailwind-merge` dentro de los componentes de Shadcn/UI para variantes y composición de clases.
+
+- **Tematización:**
+  - La tematización se gestiona mediante variables CSS definidas en `globals.css`, tal como lo espera Tailwind CSS v4.
+  - Modifica estas variables para cambiar la apariencia global (colores base, radio de borde, etc.).
+
+- **Integración con RSC y Client Components:**
+  - Muchos componentes de Shadcn/UI son Client Components (`'use client'`) porque usan hooks o manejan eventos.
+  - Si un componente de Shadcn/UI requiere `'use client'`, úsalo como tal.
+  - Intenta mantener los Client Components lo más "abajo" (hojas) posible en el árbol de componentes para optimizar el rendimiento de los RSCs.
+
+- **Accesibilidad (a11y):**
+  - Los componentes de Shadcn/UI están construidos sobre primitivas de Radix UI, que son accesibles por defecto.
+  - Asegúrate de mantener la accesibilidad al personalizar o componer estos componentes (e.g., no remover atributos ARIA importantes, asegurar contraste de color).
+

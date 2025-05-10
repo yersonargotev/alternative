@@ -1,0 +1,81 @@
+---
+description: 
+globs: app/**/actions.ts,src/app/**/actions.ts,**/*.tsx
+alwaysApply: false
+---
+- **Definición:**
+  - Define Server Actions en archivos separados (e.g., `app/feature/actions.ts`) o co-localizadas con Server Components.
+  - Marca la función o el archivo con la directiva `'use server';`.
+
+- **Uso Principal:**
+  - Principalmente para mutaciones de datos (crear, actualizar, eliminar) y manejo de envíos de formularios.
+  - Pueden ser llamadas desde Client Components (usando `startTransition` o directamente) o Server Components (como `action` en un `<form>`).
+  ```typescript
+  // app/products/actions.ts
+  'use server';
+
+  import { z } from 'zod';
+  import { revalidatePath } from 'next/cache';
+
+  const ProductSchema = z.object({ name: z.string().min(3) });
+
+  export async function createProduct(prevState: any, formData: FormData) {
+    const validatedFields = ProductSchema.safeParse({
+      name: formData.get('name'),
+    });
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'Missing Fields. Failed to Create Product.',
+      };
+    }
+    // Lógica para crear el producto en la base de datos...
+    // await db.product.create({ data: { name: validatedFields.data.name }});
+    console.log('Product created:', validatedFields.data);
+
+    revalidatePath('/products'); // Revalida la ruta de productos
+    return { message: 'Product created successfully', errors: {} };
+    // O redirect('/products');
+  }
+  ```
+
+- **Validación de Entradas:**
+  - **Siempre** valida las entradas de Server Actions usando Zod (o una librería similar). No confíes en la validación del cliente.
+  - Trata las Server Actions como endpoints de API públicos en términos de seguridad.
+
+- **Manejo de Estado y Errores:**
+  - Devuelve objetos estructurados desde las Server Actions para indicar éxito, errores de validación, o errores generales.
+  - Usa `useActionState` (antes `useFormState`) en Client Components para manejar el estado de la acción (pendiente, datos, errores).
+  ```tsx
+  // app/products/page.tsx (Client Component ejemplo)
+  'use client';
+  import { useActionState } from 'react';
+  import { createProduct } from './actions';
+
+  export default function ProductForm() {
+    const initialState = { message: null, errors: {} };
+    const [state, formAction] = useActionState(createProduct, initialState);
+
+    return (
+      <form action={formAction}>
+        <input type="text" name="name" />
+        {state?.errors?.name && <p>{state.errors.name.join(', ')}</p>}
+        <button type="submit">Create Product</button>
+        {state?.message && !state.errors && <p>{state.message}</p>}
+      </form>
+    );
+  }
+  ```
+
+- **Seguridad:**
+  - Implementa autenticación y autorización. Asegúrate de que el usuario tiene permisos para realizar la acción.
+  - Usa el paquete `server-only` para marcar módulos que solo deben ejecutarse en el servidor y nunca ser enviados al cliente.
+
+- **Revalidación de Datos:**
+  - Usa `revalidatePath('/path-to-revalidate')` o `revalidateTag('data-tag')` para limpiar el caché de Next.js y re-fetch datos después de una mutación exitosa.
+  - También puedes usar `redirect('/new-path')` desde `next/navigation`.
+
+- **Progresive Enhancement:**
+  - Las Server Actions funcionan incluso si JavaScript está deshabilitado en el cliente cuando se usan con `<form action={...}>`.
+

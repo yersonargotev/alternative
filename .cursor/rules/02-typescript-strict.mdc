@@ -1,0 +1,31 @@
+---
+description: 
+globs: **/*.ts,**/*.tsx
+alwaysApply: false
+---
+- Habilita `"strict": true` en `tsconfig.json` y todas sus sub-opciones (`noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`, etc.).
+- Evita el uso de `any` explícito. Si es inevitable temporalmente, usa `unknown` y refina el tipo, o usa `// @ts-ignore` con una explicación y un TODO para arreglarlo.
+- Prefiere `type` para definir tipos de objetos y uniones/intersecciones. Usa `interface` para definir la forma de objetos que pueden ser extendidos (especialmente para props de componentes o entidades de API) o implementados por clases (aunque se prefieren funciones). Sé consistente.
+- Evita `enum` de TypeScript. Usa `as const` para objetos o uniones de strings literales para un comportamiento similar con mejor tree-shaking.
+  ```typescript
+  // Mal
+  // enum Status { PENDING, COMPLETED }
+
+  // Bien
+  const STATUS = {
+    PENDING: "pending",
+    COMPLETED: "completed",
+  } as const;
+  type Status = typeof STATUS[keyof typeof STATUS];
+  // o
+  // type Status = "pending" | "completed";
+  ```
+- Para componentes funcionales, define las props con una `interface` o `type`.
+  ```typescript
+  interface MyComponentProps {
+    title: string;
+    count?: number;
+  }
+  const MyComponent = ({ title, count = 0 }: MyComponentProps) => { /* ... */ };
+  ```
+

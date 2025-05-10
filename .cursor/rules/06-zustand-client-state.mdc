@@ -1,0 +1,59 @@
+---
+description: 
+globs: src/stores/**/*.ts,app/stores/**/*.ts,src/hooks/useStore.ts
+alwaysApply: false
+---
+- **Uso Exclusivo en Client Components:**
+  - Zustand está diseñado para la gestión de estado del lado del cliente. **No uses Zustand directamente en React Server Components (RSCs).**
+  - Si un RSC necesita datos que están en un store de Zustand, esos datos deben ser manejados por un Client Component padre o pasados como props desde un RSC que los obtiene de otra fuente.
+
+- **Instanciación por Petición (Importante para Next.js App Router):**
+  - Para evitar el sangrado de estado entre diferentes peticiones/usuarios en el servidor (aunque Zustand es principalmente para el cliente, su inicialización podría verse afectada en SSR si no se maneja bien), se recomienda un patrón que asegure una instancia fresca del store o su estado inicializado correctamente en el cliente.
+  - Un patrón común es crear el store y usar un Provider de React Context si necesitas inicializar el store con props del servidor o resetearlo.
+    ```typescript
+    // stores/myStore.ts
+    import { create } from 'zustand';
+
+    interface MyState {
+      count: number;
+      increment: () => void;
+    }
+
+    // Este es el store base
+    export const useMyStore = create<MyState>((set) => ({
+      count: 0,
+      increment: () => set((state) => ({ count: state.count + 1 })),
+    }));
+
+    // Si necesitas inicializar desde el servidor o resetear,
+    // considera un custom hook o un provider de contexto
+    // que maneje la lógica de inicialización/hidratación.
+    // La documentación de Zustand tiene ejemplos para SSR con Next.js.
+    ```
+  - **Para App Router (Client Components):** La hidratación es más sencilla. Puedes inicializar el store en un Client Component usando `useEffect` para cargar el estado inicial si es necesario, o usar `zustand/middleware persist` si quieres persistir el estado.
+
+- **Estructura del Store (Slices):**
+  - Para stores grandes, organízalos en "slices" (módulos más pequeños), cada uno manejando una parte del estado y sus acciones.
+  - Puedes combinar slices usando el patrón de `(set, get, api) => ({ ...slice1(set, get, api), ...slice2(set, get, api) })`.
+
+- **Selectores para Optimización:**
+  - Para evitar re-renders innecesarios, selecciona solo las partes del estado que el componente necesita.
+  ```typescript
+  // Mal: el componente se re-renderiza si CUALQUIER COSA en el store cambia
+  // const { count, otherProp } = useMyStore();
+
+  // Bien: el componente solo se re-renderiza si `count` cambia
+  const count = useMyStore((state) => state.count);
+
+  // Bien: para múltiples valores, si el objeto retornado es nuevo en cada render,
+  // usa un shallow-compare o un selector que memoice
+  import { shallow } from 'zustand/shallow';
+  const { count, increment } = useMyStore(
+    (state) => ({ count: state.count, increment: state.increment }),
+    shallow // importante para objetos/arrays
+  );
+  ```
+
+- **Middleware:**
+  - Utiliza middleware de Zustand como `devtools` (para Redux DevTools), `persist` (para localStorage/sessionStorage), `immer` (para mutaciones de estado inmutables más sencillas) según sea necesario.
+

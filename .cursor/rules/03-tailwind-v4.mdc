@@ -1,0 +1,48 @@
+---
+description: 
+globs: app/globals.css,**/*.tsx
+alwaysApply: false
+---
+- **Configuración CSS-First:**
+  - La configuración principal de Tailwind CSS v4 se realiza en `app/globals.css` usando `@import "tailwindcss";` y la directiva `@theme`.
+  - El archivo `tailwind.config.ts` (o `.js`) es mínimo o incluso innecesario para configuraciones básicas. Úsalo para plugins o configuraciones avanzadas no cubiertas por `@theme`.
+  - Importa `globals.css` en el layout raíz (`app/layout.tsx`).
+
+- **Estilado y Clases:**
+  - Utiliza las clases de utilidad de Tailwind directamente en los componentes JSX.
+  - Para clases dinámicas o condicionales, usa `clsx` y `tailwind-merge` para evitar conflictos y simplificar la lógica.
+    ```typescript
+    import clsx from 'clsx';
+    import { twMerge } from 'tailwind-merge';
+
+    function MyComponent({ isActive, isPrimary }: { isActive: boolean; isPrimary: boolean }) {
+      const className = twMerge(
+        'base-styles',
+        isActive && 'active-styles',
+        isPrimary ? 'primary-styles' : 'secondary-styles'
+      );
+      return <div className={className}>...</div>;
+    }
+    ```
+
+- **Modo Oscuro (Dark Mode):**
+  - Implementa el modo oscuro usando la variante `dark:` y la configuración basada en clases. En `globals.css`:
+    ```css
+    @import "tailwindcss"; /* Asegúrate que esta sea la primera línea */
+
+    @theme {
+      /* ... tus personalizaciones de tema ... */
+    }
+
+    @custom-variant dark (&:where(.dark, .dark *)); /* Para Tailwind v4 */
+    ```
+  - Utiliza una librería como `next-themes` para gestionar el cambio de tema y la clase `dark` en el elemento `html`.
+
+- **Personalización y Tematización (Theming):**
+  - Define variables CSS personalizadas dentro del bloque `@theme` en `globals.css` para colores, espaciado, tipografía, etc.
+  - Shadcn/UI utiliza este enfoque; alinea tus personalizaciones con su sistema si lo usas.
+
+- **Rendimiento:**
+  - Tailwind CSS v4 genera CSS optimizado por defecto.
+  - Para producción, asegúrate de que tu proceso de build minifique el CSS resultante (Next.js lo hace por defecto).
+

@@ -1,0 +1,30 @@
+---
+description: 
+globs: src/app/**/*.tsx,src/app/**/*.ts,app/**/*.ts,app/**/*.tsx
+alwaysApply: false
+---
+- **Estructura de Proyecto:**
+  - Organiza el código dentro de `src/` (si se usa) o directamente en la raíz.
+  - Utiliza una estructura basada en características (feature-based) dentro de `app/` o `src/app/` (e.g., `app/dashboard/...`, `app/products/...`).
+  - Co-localiza archivos relacionados (componentes, hooks, utils específicos de una feature) dentro de su carpeta de feature.
+  - Utiliza Route Groups `(groupName)` para organizar rutas sin afectar la URL y para aplicar layouts específicos.
+  - Utiliza Private Folders `_folderName` para componentes, utils, etc., que no deben ser rutas.
+  - Configura `paths` en `tsconfig.json` para importaciones absolutas (e.g., `@/components/*`).
+
+- **Componentes y Rendering:**
+  - Prioriza React Server Components (RSCs) por defecto para fetching de datos y lógica de servidor.
+  - Minimiza el uso de `'use client'`. Aplícalo solo a componentes que necesiten interactividad, hooks de estado/efecto, o APIs de navegador. Intenta que los Client Components sean "hojas" en el árbol de componentes.
+  - Envuelve Client Components que puedan suspender (e.g., por `React.lazy` o data fetching con Tanstack Query) en `<React.Suspense>` con un `fallback` adecuado.
+  - Utiliza `next/image` para optimización de imágenes (formato WebP, `sizes`, `priority`).
+  - Utiliza `next/font` para optimización de fuentes.
+  - Utiliza `next/link` para navegación CSR.
+
+- **Data Fetching:**
+  - En RSCs, usa `async/await` con `fetch` para obtener datos. Aprovecha el cacheo automático de Next.js.
+  - Para fetching del lado del cliente, usa Tanstack Query (ver regla `08-tanstack-query-client-async.mdc`).
+  - No uses `useEffect` para fetching de datos en Client Components si Tanstack Query puede manejarlo.
+
+- **Optimización de Performance (Web Vitals):**
+  - Optimiza LCP, CLS, FID.
+  - Utiliza `dynamic()` de Next.js para componentes no críticos o grandes.
+

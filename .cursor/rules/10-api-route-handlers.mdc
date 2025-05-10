@@ -1,0 +1,70 @@
+---
+description: 
+globs: app/api/**/route.ts,src/app/api/**/route.ts
+alwaysApply: false
+---
+- **Estructura y Ubicación:**
+  - Define Route Handlers en archivos `route.ts` (o `.js`) dentro del directorio `app/api/`.
+  - La estructura de carpetas dentro de `app/api/` define la ruta del endpoint (e.g., `app/api/users/route.ts` -> `/api/users`).
+  - Usa nombres de carpetas dinámicas como `[id]` para rutas dinámicas (e.g., `app/api/users/[id]/route.ts`).
+
+- **Métodos HTTP:**
+  - Exporta funciones nombradas según el método HTTP que manejan: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`, `OPTIONS`.
+  ```typescript
+  // app/api/items/route.ts
+  import { NextResponse } from 'next/server';
+  import { z } from 'zod';
+
+  const ItemSchema = z.object({ name: z.string() });
+
+  export async function GET(request: Request) {
+    // Lógica para obtener items...
+    // const items = await db.item.findMany();
+    const items = [{ id: 1, name: 'Item 1' }];
+    return NextResponse.json({ data: items });
+  }
+
+  export async function POST(request: Request) {
+    try {
+      const body = await request.json();
+      const validation = ItemSchema.safeParse(body);
+      if (!validation.success) {
+        return NextResponse.json({ error: validation.error.flatten() }, { status: 400 });
+      }
+      // Lógica para crear un item...
+      // const newItem = await db.item.create({ data: validation.data });
+      const newItem = { id: 2, ...validation.data };
+      return NextResponse.json({ data: newItem }, { status: 201 });
+    } catch (error) {
+      return NextResponse.json({ error: 'Failed to parse JSON or server error' }, { status: 500 });
+    }
+  }
+  ```
+
+- **Validación de Entradas:**
+  - **Siempre** valida los datos de la petición (cuerpo, parámetros de query, headers) usando Zod.
+  - Valida `request.method` si es necesario (aunque el nombre de la función ya lo define).
+
+- **Manejo de Peticiones y Respuestas:**
+  - Usa los objetos `Request` y `NextResponse` (que extiende `Response`) de la Web API.
+  - Para leer el cuerpo de la petición: `await request.json()`, `await request.formData()`, `await request.text()`.
+  - Para leer parámetros de query: `const { searchParams } = new URL(request.url); const param = searchParams.get('paramName');`
+  - Devuelve respuestas con `NextResponse.json(data, { status: 200 })`.
+
+- **Manejo de Errores:**
+  - Usa `try...catch` para manejar errores inesperados y devuelve respuestas de error apropiadas con códigos de estado HTTP correctos (400, 401, 403, 404, 500, etc.).
+
+- **Seguridad:**
+  - Implementa autenticación y autorización para proteger tus endpoints.
+  - Configura CORS si tu API necesita ser accedida desde diferentes orígenes.
+  - Implementa limitación de peticiones (rate limiting) para prevenir abusos.
+
+- **Caching:**
+  - Las peticiones `GET` con `Request` son cacheadas por defecto por Next.js.
+  - Puedes controlar el comportamiento del cacheo usando opciones de `fetch` o configuraciones de segmento de ruta.
+  - Las peticiones `POST`, `PUT`, `DELETE`, etc., no son cacheadas.
+
+- **¿Cuándo usar Route Handlers vs Server Actions?**
+  - **Server Actions:** Ideal para mutaciones de datos directamente desde componentes React (especialmente formularios), integradas con el modelo de componentes de React.
+  - **Route Handlers:** Para construir APIs RESTful tradicionales que pueden ser consumidas por cualquier cliente HTTP (no solo tu aplicación Next.js), o cuando necesitas un control más fino sobre la request/response HTTP.
+

@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Escribe código TypeScript conciso, técnico y moderno.
+- Utiliza patrones de programación funcionales y declarativos. Evita clases donde sea posible.
+- Prefiere la iteración y la modularización sobre la duplicación de código.
+- Usa nombres de variables descriptivos, preferiblemente en inglés, utilizando verbos auxiliares (e.g., `isLoading`, `hasError`, `shouldFetch`).
+- Estructura los archivos de componentes de React de forma clara: importaciones, interfaz de props (si aplica), componente exportado (preferiblemente nombrado), subcomponentes (si son locales y pequeños), helpers, tipos.
+- Nomenclatura de directorios: `lowercase-kebab-case` (e.g., `user-authentication`, `product-cards`).
+- Nomenclatura de archivos: `kebab-case.ts` para utilidades/servicios, `PascalCase.tsx` para componentes React.
+- Favorece los `named exports` sobre los `default exports` para mayor claridad y refactorización más sencilla, excepto para `page.tsx`, `layout.tsx`, `template.tsx`, `error.tsx`, `loading.tsx` y `route.ts` de Next.js.
+- Implementa manejo de errores robusto: maneja errores y casos límite tempranamente usando `guard clauses` y `early returns`.
+- Para errores esperados en Server Actions o funciones de utilidad, modélalos como parte del valor de retorno (e.g., `{ data: T | null, error: string | null }`).
+- Utiliza `error.tsx` de Next.js o `ErrorBoundary` de React para errores inesperados en el cliente.
+- Implementa un logging de errores adecuado.
+

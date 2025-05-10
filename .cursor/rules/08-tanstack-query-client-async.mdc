@@ -1,0 +1,97 @@
+---
+description: 
+globs: src/hooks/queries/**/*.ts,app/hooks/queries/**/*.ts,**/*.tsx
+alwaysApply: false
+---
+- **Uso Exclusivo en Client Components (`'use client'`):**
+  - Tanstack Query está diseñado para la gestión de estado del servidor *en el cliente*.
+
+- **Configuración Inicial:**
+  - Envuelve tu aplicación (o la parte que usa Tanstack Query) en `<QueryClientProvider client={queryClient}>`.
+  - Crea una instancia de `QueryClient`.
+  ```typescript
+  // app/providers.tsx (o similar)
+  'use client';
+  import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+  import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+  import React from 'react';
+
+  export function Providers({ children }: { children: React.ReactNode }) {
+    const [queryClient] = React.useState(() => new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 1000 * 60 * 5, // 5 minutes
+          // refetchOnWindowFocus: false, // Opcional
+        },
+      },
+    }));
+
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    );
+  }
+  // Luego usa <Providers> en tu layout.tsx raíz
+  ```
+
+- **`useQuery` para Lectura de Datos:**
+  - Usa `useQuery` para fetching, caching y sincronización de datos.
+  - Define **query keys** descriptivas y específicas. La estructura de la query key debe reflejar las dependencias de la query.
+  ```typescript
+  // Ejemplo de hook para una query
+  // hooks/queries/useProducts.ts
+  import { useQuery } from '@tanstack/react-query';
+
+  async function fetchProducts(categoryId?: string) {
+    const response = await fetch(`/api/products${categoryId ? `?categoryId=${categoryId}` : ''}`);
+    if (!response.ok) throw new Error('Failed to fetch products');
+    return response.json();
+  }
+
+  export function useProductsQuery(categoryId?: string) {
+    return useQuery({
+      queryKey: ['products', categoryId], // La query key incluye dependencias
+      queryFn: () => fetchProducts(categoryId),
+      enabled: !!categoryId, // Solo ejecuta si categoryId está presente (opcional)
+    });
+  }
+  ```
+
+- **`useMutation` para Escritura de Datos:**
+  - Usa `useMutation` para crear, actualizar o eliminar datos (POST, PUT, DELETE).
+  - Invalida queries relevantes en `onSuccess` o `onSettled` para re-fetch datos obsoletos.
+  ```typescript
+  // Ejemplo de hook para una mutación
+  // hooks/mutations/useCreateProduct.ts
+  import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+  async function createProduct(newProduct: { name: string; price: number }) {
+    const response = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProduct),
+    });
+    if (!response.ok) throw new Error('Failed to create product');
+    return response.json();
+  }
+
+  export function useCreateProductMutation() {
+    const queryClient = useQueryClient();
+    return useMutation({
+      mutationFn: createProduct,
+      onSuccess: () => {
+        // Invalida y re-fetch la query de 'products'
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+      },
+    });
+  }
+  ```
+
+- **Manejo de Estado de Error y Carga:**
+  - `useQuery` y `useMutation` devuelven estados como `isLoading`, `isError`, `error`, `isSuccess`, `data`. Úsalos para renderizar la UI correspondientemente.
+
+- **No usar para Fetching en RSCs:**
+  - En React Server Components, usa `fetch` nativo con `async/await`. Tanstack Query es para el cliente.
+
