@@ -14,9 +14,11 @@ type RouteParams = { slug: string };
  * GET endpoint to fetch tool details by slug
  * This is a public endpoint that doesn't require authentication
  */
-export async function GET(request: Request, context: { params: RouteParams }) {
+export async function GET(request: Request, { params }: { params: Promise<RouteParams> }) {
+	let slug = "";
 	try {
-		const { slug } = context.params;
+		const paramsData = await params;
+		slug = paramsData.slug;
 
 		if (!slug) {
 			return NextResponse.json(
@@ -37,7 +39,7 @@ export async function GET(request: Request, context: { params: RouteParams }) {
 		return NextResponse.json(toolDetails);
 	} catch (error) {
 		console.error(
-			`[API_TOOLS_SLUG_GET] Error fetching tool ${context.params.slug}:`,
+			`[API_TOOLS_SLUG_GET] Error fetching tool ${slug}:`,
 			error,
 		);
 		return NextResponse.json(
@@ -71,8 +73,9 @@ async function isAdmin() {
  */
 export async function PATCH(
 	request: Request,
-	context: { params: RouteParams },
+	{ params }: { params: Promise<RouteParams> },
 ) {
+	let slug = "";
 	try {
 		// 1. Check if user is authenticated and is an admin
 		if (!(await isAdmin())) {
@@ -82,7 +85,8 @@ export async function PATCH(
 			);
 		}
 
-		const { slug } = context.params;
+		const paramsData = await params;
+		slug = paramsData.slug;
 
 		// 2. Get the tool from the database to ensure it exists
 		const existingTool = await db.query.tools.findFirst({
@@ -135,7 +139,7 @@ export async function PATCH(
 		}
 	} catch (error) {
 		console.error(
-			`[API_TOOLS_SLUG_PATCH] Error updating tool ${context.params.slug}:`,
+			`[API_TOOLS_SLUG_PATCH] Error updating tool ${slug}:`,
 			error,
 		);
 		return NextResponse.json(
@@ -151,8 +155,9 @@ export async function PATCH(
  */
 export async function DELETE(
 	request: Request,
-	context: { params: RouteParams },
+	{ params }: { params: Promise<RouteParams> },
 ) {
+	let slug = "";
 	try {
 		// 1. Check if user is authenticated and is an admin
 		if (!(await isAdmin())) {
@@ -162,7 +167,8 @@ export async function DELETE(
 			);
 		}
 
-		const { slug } = context.params;
+		const paramsData = await params;
+		slug = paramsData.slug;
 
 		// 2. Get the tool from the database to ensure it exists
 		const existingTool = await db.query.tools.findFirst({
@@ -187,7 +193,7 @@ export async function DELETE(
 		});
 	} catch (error) {
 		console.error(
-			`[API_TOOLS_SLUG_DELETE] Error deleting tool ${context.params.slug}:`,
+			`[API_TOOLS_SLUG_DELETE] Error deleting tool ${slug}:`,
 			error,
 		);
 		return NextResponse.json(

@@ -21,7 +21,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type ToolPageProps = {
-	params: { slug: string };
+	params: Promise<{ slug: string }>;
 };
 
 // Generate static paths for approved tools at build time (optional, good for SEO)
@@ -142,7 +142,8 @@ async function getToolDetails(slug: string) {
 }
 
 export default async function ToolDetailPage({ params }: ToolPageProps) {
-	const data = await getToolDetails(params.slug);
+	const { slug } = await params;
+	const data = await getToolDetails(slug);
 
 	if (!data) {
 		notFound(); // Trigger 404 page if tool not found or error occurred
