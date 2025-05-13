@@ -1,6 +1,6 @@
 'use client'; // Make this a Client Component
 
-import FiltersAndSearch from '@/components/FiltersAndSearch';
+import FiltersAndSearch from '@/components/filter-and-search';
 import PaginationControls from '@/components/pagination-controls';
 import ToolList from '@/components/tool-list';
 import { Skeleton } from '@/components/ui/skeleton';
