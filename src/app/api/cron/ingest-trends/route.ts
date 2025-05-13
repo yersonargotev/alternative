@@ -2,10 +2,10 @@ import { db } from "@/db";
 import { tools } from "@/db/schema";
 import { generateSlug } from "@/schemas";
 import { githubTrendingResponseSchema } from "@/schemas/external";
+import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 
 const TRENDING_API_URL_DAILY =
 	"https://raw.githubusercontent.com/findmio/github-trending-api/main/raw/day.json";
@@ -13,17 +13,35 @@ const MIN_STARS_TO_CONSIDER_FOR_ADD = 100; // Minimum total stars for a new tren
 const MIN_CURRENT_PERIOD_STARS_TO_ADD = 50; // Minimum stars in current period for a new repo
 
 export async function GET(request: NextRequest) {
-	// First check Clerk authentication if available
+	// Check if this is a Vercel cron job request
+	const isVercelCron = request.headers.get("x-vercel-cron") === "1";
+
+	// Check Clerk authentication if available
 	const { userId } = await auth();
-	
-	// Then check for cron secret
+
+	// Check for cron secret
 	const cronSecret = process.env.CRON_SECRET;
 	const authHeader = request.headers.get("authorization");
-	
-	// Allow access if user is authenticated with Clerk OR if the cron secret is valid
-	if (!userId && (!cronSecret || authHeader !== `Bearer ${cronSecret}`)) {
+	const hasValidToken = cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+	// Allow access if:
+	// 1. It's a Vercel cron job request, OR
+	// 2. User is authenticated with Clerk, OR
+	// 3. Request has valid cron secret token
+	if (!isVercelCron && !userId && !hasValidToken) {
 		console.warn("[CRON_INGEST_TRENDS] Unauthorized attempt");
 		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+	}
+
+	// Log the source of the request for debugging
+	if (isVercelCron) {
+		console.info("[CRON_INGEST_TRENDS] Triggered by Vercel cron job");
+	} else if (userId) {
+		console.info(
+			`[CRON_INGEST_TRENDS] Triggered by authenticated user: ${userId}`,
+		);
+	} else {
+		console.info("[CRON_INGEST_TRENDS] Triggered with valid cron secret");
 	}
 
 	console.info("[CRON_INGEST_TRENDS] Starting GitHub trends ingestion...");
