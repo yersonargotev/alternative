@@ -3,6 +3,7 @@ import { tools } from "@/db/schema";
 import { isAdmin } from "@/lib/check-admin";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { ToolActionButtons } from "./tool-action-buttons";
 
 // Page component for Tool Approval
 export default async function ApproveToolsPage() {
@@ -21,16 +22,16 @@ export default async function ApproveToolsPage() {
     });
 
     return (
-        <div className="container max-w-screen-xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-6">Approve Tools</h1>
+        <div className="container mx-auto max-w-screen-xl p-6">
+            <h1 className="mb-6 font-bold text-2xl">Approve Tools</h1>
 
             {pendingTools.length === 0 ? (
-                <div className="p-4 bg-muted rounded-lg">
+                <div className="rounded-lg bg-muted p-4">
                     <p className="text-center text-muted-foreground">No hay herramientas pendientes de aprobación.</p>
                 </div>
             ) : (
                 <div className="space-y-4">
-                    <p className="text-muted-foreground mb-4">
+                    <p className="mb-4 text-muted-foreground">
                         {pendingTools.length} {pendingTools.length === 1 ? "herramienta" : "herramientas"} pendiente{pendingTools.length === 1 ? "" : "s"} de aprobación.
                     </p>
 
@@ -38,25 +39,25 @@ export default async function ApproveToolsPage() {
                         {pendingTools.map((tool) => (
                             <div
                                 key={tool.id}
-                                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                                className="rounded-lg border p-4 transition-shadow hover:shadow-md"
                             >
-                                <div className="flex justify-between items-start mb-2">
+                                <div className="mb-2 flex items-start justify-between">
                                     <h3 className="font-semibold">{tool.name}</h3>
-                                    <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">
+                                    <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-800">
                                         Pendiente
                                     </span>
                                 </div>
 
-                                <p className="text-sm text-muted-foreground mb-3">
+                                <p className="mb-3 text-muted-foreground text-sm">
                                     {tool.description}
                                 </p>
 
                                 {tool.tags && tool.tags.length > 0 && (
-                                    <div className="flex flex-wrap gap-1 mb-3">
+                                    <div className="mb-3 flex flex-wrap gap-1">
                                         {tool.tags.map((tag) => (
                                             <span
                                                 key={tag}
-                                                className="text-xs px-2 py-0.5 bg-muted rounded-full"
+                                                className="rounded-full bg-muted px-2 py-0.5 text-xs"
                                             >
                                                 {tag}
                                             </span>
@@ -64,21 +65,8 @@ export default async function ApproveToolsPage() {
                                     </div>
                                 )}
 
-                                <div className="flex flex-wrap gap-2 mt-4">
-                                    <button
-                                        type="button"
-                                        className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90"
-                                    // Aquí se implementaría la lógica para aprobar
-                                    >
-                                        Aprobar
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="px-3 py-1 bg-destructive text-destructive-foreground rounded-md text-sm font-medium hover:bg-destructive/90"
-                                    // Aquí se implementaría la lógica para rechazar
-                                    >
-                                        Rechazar
-                                    </button>
+                                <div className="mt-4">
+                                    <ToolActionButtons toolId={tool.id} />
                                 </div>
                             </div>
                         ))}
