@@ -117,8 +117,8 @@ export const toolsRelations = relations(tools, ({ many, one }) => ({
 	alternativesRelations: many(toolAlternatives, { relationName: "original" }),
 	// A tool can have many votes
 	votes: many(votes),
-	// Optional: Link back to the user who submitted it (if needed, requires a users table)
-	// submittedByUser: one(users, { fields: [tools.submittedByUserId], references: [users.clerkId] })
+	// Link back to the user who submitted it
+	submittedByUser: one(users, { fields: [tools.submittedByUserId], references: [users.id] })
 }));
 
 export const toolAlternativesRelations = relations(
@@ -145,10 +145,36 @@ export const votesRelations = relations(votes, ({ one }) => ({
 		fields: [votes.toolId],
 		references: [tools.id],
 	}),
-	// Optional: Link back to the user who voted (if needed, requires a users table)
-	// user: one(users, { fields: [votes.userId], references: [users.clerkId] })
+	// Link back to the user who voted
+	user: one(users, { fields: [votes.userId], references: [users.id] })
 }));
 
-// Note: We are not creating a separate `users` table synced with Clerk for this MVP,
-// as Clerk manages user profiles. We only store the `userId` where needed (votes, submissions).
-// If more user-specific data needs to be stored locally, a `users` table would be necessary.
+// --- Users Table ---
+export const users = pgTable(
+	"users",
+	{
+		id: varchar("id", { length: 191 }).primaryKey(), // Clerk User ID
+		email: varchar("email", { length: 255 }).notNull().unique(),
+		firstName: varchar("first_name", { length: 100 }),
+		lastName: varchar("last_name", { length: 100 }),
+		imageUrl: varchar("image_url", { length: 255 }),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+			() => new Date(),
+		),
+		lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+	},
+	(table) => ({
+		emailIndex: index("email_idx").on(table.email),
+	}),
+);
+
+// --- Users Relations ---
+export const usersRelations = relations(users, ({ many }) => ({
+	// A user can submit many tools
+	submittedTools: many(tools),
+	// A user can cast many votes
+	votes: many(votes),
+}));
