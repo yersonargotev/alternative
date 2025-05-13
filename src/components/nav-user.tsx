@@ -7,7 +7,9 @@ import {
 	CreditCard,
 	LogOut,
 	Sparkles,
+	User,
 } from "lucide-react";
+import { SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -26,15 +28,10 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 
-export function NavUser({
-	user,
-}: {
-	user: {
-		name: string;
-		email: string;
-		avatar: string;
-	};
-}) {
+export function NavUser() {
+	// Use Clerk hooks for authentication and user data
+	const { isSignedIn } = useAuth();
+	const { user } = useUser();
 	const { isMobile } = useSidebar();
 
 	return (
@@ -47,12 +44,21 @@ export function NavUser({
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={user.avatar} alt={user.name} />
-								<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+								{isSignedIn && user ? (
+									<AvatarImage src={user.imageUrl} alt={user.fullName || 'User'} />
+								) : (
+									<AvatarFallback className="rounded-lg">
+										<User className="h-4 w-4" />
+									</AvatarFallback>
+								)}
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">{user.name}</span>
-								<span className="truncate text-xs">{user.email}</span>
+								<span className="truncate font-medium">
+									{isSignedIn && user ? user.fullName || user.username : 'Guest'}
+								</span>
+								<span className="truncate text-xs">
+									{isSignedIn && user ? user.primaryEmailAddress?.emailAddress : 'Not signed in'}
+								</span>
 							</div>
 							<ChevronsUpDown className="ml-auto size-4" />
 						</SidebarMenuButton>
@@ -66,12 +72,21 @@ export function NavUser({
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={user.avatar} alt={user.name} />
-									<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+									{isSignedIn && user ? (
+										<AvatarImage src={user.imageUrl} alt={user.fullName || 'User'} />
+									) : (
+										<AvatarFallback className="rounded-lg">
+											<User className="h-4 w-4" />
+										</AvatarFallback>
+									)}
 								</Avatar>
 								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-medium">{user.name}</span>
-									<span className="truncate text-xs">{user.email}</span>
+									<span className="truncate font-medium">
+										{isSignedIn && user ? user.fullName || user.username : 'Guest'}
+									</span>
+									<span className="truncate text-xs">
+										{isSignedIn && user ? user.primaryEmailAddress?.emailAddress : 'Not signed in'}
+									</span>
 								</div>
 							</div>
 						</DropdownMenuLabel>
@@ -98,10 +113,12 @@ export function NavUser({
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<LogOut />
-							Log out
-						</DropdownMenuItem>
+						<SignOutButton>
+							<DropdownMenuItem>
+								<LogOut />
+								Log out
+							</DropdownMenuItem>
+						</SignOutButton>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>
