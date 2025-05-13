@@ -1,4 +1,4 @@
-import { addVote, removeVote, getUserVoteStatus } from "@/lib/data/votes";
+import { addVote, getUserVoteStatus, removeVote } from "@/lib/data/votes";
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -21,7 +21,9 @@ export async function GET(request: NextRequest) {
 		// No need to check !userId here, getUserVoteStatus handles null userId
 
 		const searchParams = request.nextUrl.searchParams;
-		const parseResult = getVoteStatusQuerySchema.safeParse(Object.fromEntries(searchParams));
+		const parseResult = getVoteStatusQuerySchema.safeParse(
+			Object.fromEntries(searchParams),
+		);
 
 		if (!parseResult.success) {
 			return NextResponse.json(

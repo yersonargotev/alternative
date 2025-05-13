@@ -1,113 +1,113 @@
 import type * as React from "react";
 
 const SparkyDevsIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        style={{
-            display: "block",
-        }}
-        viewBox="0 0 1024 1024"
-        {...props}
-    >
-        <title>SparkyDevs</title>
-        <path
-            d="M0 0h1024v1024H0Z"
-            style={{
-                fill: "transparent",
-            }}
-        />
-        <path
-            d="M0 0h10l10 4 8 7 5 8 1 5v11l-4 10-6 7-8 5v45l3 7 30 30 1-37 5-9 9-10 2-4-3-4-2-5V54l5-9 5-5 8-5 3-1h15l10 5 7 8 4 10v10l-4 10-7 8-10 5-3 1-12 1-8 8-4 7v47l4 8 17 17 5 5v2h2l7 8 109 109 6 10 2 6v16l-4 12-7 9-24 24-7 8-48 48-18 13-16 9-4 1 5 5 11 10 8 7 14 14 10 13 8 16 3 11v22l-4 12-6 11-11 12-13 8-11 4-11 1 8 38 10 50v7l-4 7-7 3H56l-6-3-5-6-4-16-10-51-3-3-2-1h-50l-5 5-8 40-6 26-5 6-7 3h-70l-6-4-1-2v-10l5-8 8-6 9-3 3-8 8-40 8-43 7-36 5-23v-8l-3-3h-6l-4 4-6 28-3 11-8 10-12 13-8 6-6 2h-14l-10-5-8-9-3-8v-15l6-12 18-18 7-8 38-38 7-8 9-9-5-4-11-6-13-9-11-9-12-11-9-9-7-8-50-50-6-10-3-10v-13l4-11 8-11 134-134 5-8 1-3v-48l-6-8-7-7h-11l-10-4-8-7-5-10-1-4v-9l4-10 6-7 9-5 3-1h13l10 4 6 5 5 8 2 6v9l-4 11-1 5 7 7 7 11 1 3 1 37 9-9 7-8 15-15 2-5V57l-6-4-5-5-5-7-2-7V23l3-8 9-10 8-4Z"
-            transform="translate(507 76)"
-            style={{
-                fill: "#00a7e3",
-            }}
-        />
-        <path
-            d="M0 0h190l15 4 10 6 9 8 7 11 4 12v73l-3 14-4 9-7 12-13 14-13 10-17 10-19 8-17 5-20 4-10 1H82l-26-4-21-6-19-8-16-9-12-9-9-8-9-11-8-14-4-13V38l4-11 8-11 10-8 13-6Z"
-            transform="translate(416 326)"
-            style={{
-                fill: "#04101d",
-            }}
-        />
-        <path
-            d="M0 0h42l3 3v13h16l2 2v42l-4 3H45v13l-2 2H0l-2-2V63h-14l-3-3V18l2-2h15V2Z"
-            transform="translate(425 363)"
-            style={{
-                fill: "#00a7e2",
-            }}
-        />
-        <path
-            d="M0 0h42l2 2v14h16l2 2v42l-4 3H44v13l-2 2H0l-2-2V63h-15l-3-3V19l3-3h15V2Z"
-            transform="translate(556 363)"
-            style={{
-                fill: "#00a7e2",
-            }}
-        />
-        <path
-            d="M0 0h43v11l-15 1v17l1 1 15 1v14H0Z"
-            transform="translate(555 380)"
-            style={{
-                fill: "#040f1c",
-            }}
-        />
-        <path
-            d="M0 0h43v11l-15 1v17l1 1 15 1v14H0Z"
-            transform="translate(425 380)"
-            style={{
-                fill: "#04101c",
-            }}
-        />
-        <path
-            d="m0 0 6 1 11 7 13 4h14l13-4 13-8 6 1 3 3v7l-5 6-11 7-11 4-5 1H24l-13-5-11-7-5-5V4Z"
-            transform="translate(475 456)"
-            style={{
-                fill: "#00aae5",
-            }}
-        />
-        <path
-            d="M0 0h6l4 4-1 9-14 45-10 32-5 4-6-1-3-3v-8l20-63 5-15Z"
-            transform="translate(549 572)"
-            style={{
-                fill: "#05101c",
-            }}
-        />
-        <path
-            d="M0 0h6l8 7 21 21v8l-7 8L5 67h-7l-4-4v-6l8-9h2l2-4 5-4 6-7-6-7-14-14-1-2V4Z"
-            transform="translate(571 587)"
-            style={{
-                fill: "#05101c",
-            }}
-        />
-        <path
-            d="M0 0h6l4 3v8l-24 24 2 4L6 57v7l-4 4h-6l-8-7-20-20v-9Z"
-            transform="translate(506 583)"
-            style={{
-                fill: "#050f1a",
-            }}
-        />
-        <path
-            d="M0 0h9l6 5 1 2v9l-5 6-3 1H1l-7-6-1-9 4-6Z"
-            transform="translate(423 127)"
-            style={{
-                fill: "#05101c",
-            }}
-        />
-        <path
-            d="M0 0h8l6 4 2 4-1 9-7 6H1l-6-4-2-3V6Z"
-            transform="translate(592 127)"
-            style={{
-                fill: "#04101c",
-            }}
-        />
-        <path
-            d="M0 0h8l6 5 1 8-4 6-4 2H1l-6-4-2-4V7l5-6Z"
-            transform="translate(508 95)"
-            style={{
-                fill: "#05121e",
-            }}
-        />
-    </svg>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		style={{
+			display: "block",
+		}}
+		viewBox="0 0 1024 1024"
+		{...props}
+	>
+		<title>SparkyDevs</title>
+		<path
+			d="M0 0h1024v1024H0Z"
+			style={{
+				fill: "transparent",
+			}}
+		/>
+		<path
+			d="M0 0h10l10 4 8 7 5 8 1 5v11l-4 10-6 7-8 5v45l3 7 30 30 1-37 5-9 9-10 2-4-3-4-2-5V54l5-9 5-5 8-5 3-1h15l10 5 7 8 4 10v10l-4 10-7 8-10 5-3 1-12 1-8 8-4 7v47l4 8 17 17 5 5v2h2l7 8 109 109 6 10 2 6v16l-4 12-7 9-24 24-7 8-48 48-18 13-16 9-4 1 5 5 11 10 8 7 14 14 10 13 8 16 3 11v22l-4 12-6 11-11 12-13 8-11 4-11 1 8 38 10 50v7l-4 7-7 3H56l-6-3-5-6-4-16-10-51-3-3-2-1h-50l-5 5-8 40-6 26-5 6-7 3h-70l-6-4-1-2v-10l5-8 8-6 9-3 3-8 8-40 8-43 7-36 5-23v-8l-3-3h-6l-4 4-6 28-3 11-8 10-12 13-8 6-6 2h-14l-10-5-8-9-3-8v-15l6-12 18-18 7-8 38-38 7-8 9-9-5-4-11-6-13-9-11-9-12-11-9-9-7-8-50-50-6-10-3-10v-13l4-11 8-11 134-134 5-8 1-3v-48l-6-8-7-7h-11l-10-4-8-7-5-10-1-4v-9l4-10 6-7 9-5 3-1h13l10 4 6 5 5 8 2 6v9l-4 11-1 5 7 7 7 11 1 3 1 37 9-9 7-8 15-15 2-5V57l-6-4-5-5-5-7-2-7V23l3-8 9-10 8-4Z"
+			transform="translate(507 76)"
+			style={{
+				fill: "#00a7e3",
+			}}
+		/>
+		<path
+			d="M0 0h190l15 4 10 6 9 8 7 11 4 12v73l-3 14-4 9-7 12-13 14-13 10-17 10-19 8-17 5-20 4-10 1H82l-26-4-21-6-19-8-16-9-12-9-9-8-9-11-8-14-4-13V38l4-11 8-11 10-8 13-6Z"
+			transform="translate(416 326)"
+			style={{
+				fill: "#04101d",
+			}}
+		/>
+		<path
+			d="M0 0h42l3 3v13h16l2 2v42l-4 3H45v13l-2 2H0l-2-2V63h-14l-3-3V18l2-2h15V2Z"
+			transform="translate(425 363)"
+			style={{
+				fill: "#00a7e2",
+			}}
+		/>
+		<path
+			d="M0 0h42l2 2v14h16l2 2v42l-4 3H44v13l-2 2H0l-2-2V63h-15l-3-3V19l3-3h15V2Z"
+			transform="translate(556 363)"
+			style={{
+				fill: "#00a7e2",
+			}}
+		/>
+		<path
+			d="M0 0h43v11l-15 1v17l1 1 15 1v14H0Z"
+			transform="translate(555 380)"
+			style={{
+				fill: "#040f1c",
+			}}
+		/>
+		<path
+			d="M0 0h43v11l-15 1v17l1 1 15 1v14H0Z"
+			transform="translate(425 380)"
+			style={{
+				fill: "#04101c",
+			}}
+		/>
+		<path
+			d="m0 0 6 1 11 7 13 4h14l13-4 13-8 6 1 3 3v7l-5 6-11 7-11 4-5 1H24l-13-5-11-7-5-5V4Z"
+			transform="translate(475 456)"
+			style={{
+				fill: "#00aae5",
+			}}
+		/>
+		<path
+			d="M0 0h6l4 4-1 9-14 45-10 32-5 4-6-1-3-3v-8l20-63 5-15Z"
+			transform="translate(549 572)"
+			style={{
+				fill: "#05101c",
+			}}
+		/>
+		<path
+			d="M0 0h6l8 7 21 21v8l-7 8L5 67h-7l-4-4v-6l8-9h2l2-4 5-4 6-7-6-7-14-14-1-2V4Z"
+			transform="translate(571 587)"
+			style={{
+				fill: "#05101c",
+			}}
+		/>
+		<path
+			d="M0 0h6l4 3v8l-24 24 2 4L6 57v7l-4 4h-6l-8-7-20-20v-9Z"
+			transform="translate(506 583)"
+			style={{
+				fill: "#050f1a",
+			}}
+		/>
+		<path
+			d="M0 0h9l6 5 1 2v9l-5 6-3 1H1l-7-6-1-9 4-6Z"
+			transform="translate(423 127)"
+			style={{
+				fill: "#05101c",
+			}}
+		/>
+		<path
+			d="M0 0h8l6 4 2 4-1 9-7 6H1l-6-4-2-3V6Z"
+			transform="translate(592 127)"
+			style={{
+				fill: "#04101c",
+			}}
+		/>
+		<path
+			d="M0 0h8l6 5 1 8-4 6-4 2H1l-6-4-2-4V7l5-6Z"
+			transform="translate(508 95)"
+			style={{
+				fill: "#05121e",
+			}}
+		/>
+	</svg>
 );
 
 export { SparkyDevsIcon };

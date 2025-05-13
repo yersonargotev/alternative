@@ -77,9 +77,7 @@ export const toolAlternatives = pgTable(
 			columns: [table.originalToolId, table.alternativeToolId],
 		}),
 		index("original_tool_idx").on(table.originalToolId),
-		index("alternative_tool_idx").on(
-			table.alternativeToolId,
-		),
+		index("alternative_tool_idx").on(table.alternativeToolId),
 	],
 );
 
@@ -97,10 +95,7 @@ export const votes = pgTable(
 			.notNull(),
 	},
 	(table) => [
-		unique("user_tool_vote_unique").on(
-			table.userId,
-			table.toolId,
-		), // User can only vote once per tool
+		unique("user_tool_vote_unique").on(table.userId, table.toolId), // User can only vote once per tool
 		index("vote_tool_id_idx").on(table.toolId),
 		index("vote_user_id_idx").on(table.userId),
 	],
@@ -118,7 +113,10 @@ export const toolsRelations = relations(tools, ({ many, one }) => ({
 	// A tool can have many votes
 	votes: many(votes),
 	// Link back to the user who submitted it
-	submittedByUser: one(users, { fields: [tools.submittedByUserId], references: [users.id] })
+	submittedByUser: one(users, {
+		fields: [tools.submittedByUserId],
+		references: [users.id],
+	}),
 }));
 
 export const toolAlternativesRelations = relations(
@@ -146,7 +144,7 @@ export const votesRelations = relations(votes, ({ one }) => ({
 		references: [tools.id],
 	}),
 	// Link back to the user who voted
-	user: one(users, { fields: [votes.userId], references: [users.id] })
+	user: one(users, { fields: [votes.userId], references: [users.id] }),
 }));
 
 // --- Users Table ---
@@ -166,9 +164,7 @@ export const users = pgTable(
 		),
 		lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 	},
-	(table) => [
-		index("email_idx").on(table.email),
-	],
+	(table) => [index("email_idx").on(table.email)],
 );
 
 // --- Users Relations ---
