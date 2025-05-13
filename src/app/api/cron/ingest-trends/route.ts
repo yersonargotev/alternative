@@ -5,6 +5,7 @@ import { githubTrendingResponseSchema } from "@/schemas/external";
 import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 const TRENDING_API_URL_DAILY =
 	"https://raw.githubusercontent.com/findmio/github-trending-api/main/raw/day.json";
@@ -12,10 +13,15 @@ const MIN_STARS_TO_CONSIDER_FOR_ADD = 100; // Minimum total stars for a new tren
 const MIN_CURRENT_PERIOD_STARS_TO_ADD = 50; // Minimum stars in current period for a new repo
 
 export async function GET(request: NextRequest) {
+	// First check Clerk authentication if available
+	const { userId } = await auth();
+	
+	// Then check for cron secret
 	const cronSecret = process.env.CRON_SECRET;
 	const authHeader = request.headers.get("authorization");
-
-	if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+	
+	// Allow access if user is authenticated with Clerk OR if the cron secret is valid
+	if (!userId && (!cronSecret || authHeader !== `Bearer ${cronSecret}`)) {
 		console.warn("[CRON_INGEST_TRENDS] Unauthorized attempt");
 		return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 	}
