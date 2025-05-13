@@ -1,4 +1,4 @@
-import { addVote, removeVote } from "@/lib/data/votes";
+import { addVote, removeVote, getUserVoteStatus } from "@/lib/data/votes";
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -7,6 +7,46 @@ import { z } from "zod";
 const votePayloadSchema = z.object({
 	toolId: z.number().int().positive(),
 });
+
+// Schema for GET request query parameters
+const getVoteStatusQuerySchema = z.object({
+	toolId: z.coerce.number().int().positive(), // Coerce from string query param
+});
+
+// GET handler for fetching user's vote status
+export async function GET(request: NextRequest) {
+	try {
+		const { userId } = await auth();
+
+		// No need to check !userId here, getUserVoteStatus handles null userId
+
+		const searchParams = request.nextUrl.searchParams;
+		const parseResult = getVoteStatusQuerySchema.safeParse(Object.fromEntries(searchParams));
+
+		if (!parseResult.success) {
+			return NextResponse.json(
+				{
+					message: "Invalid query parameters",
+					errors: parseResult.error.flatten().fieldErrors,
+				},
+				{ status: 400 },
+			);
+		}
+
+		const { toolId } = parseResult.data;
+
+		// Call the server-side function (which is cached)
+		const { hasVoted } = await getUserVoteStatus(toolId, userId);
+
+		return NextResponse.json({ hasVoted });
+	} catch (error) {
+		console.error("[API_VOTES_GET] Error fetching vote status:", error);
+		return NextResponse.json(
+			{ message: "Internal Server Error" },
+			{ status: 500 },
+		);
+	}
+}
 
 // POST handler for adding a vote
 export async function POST(request: NextRequest) {
