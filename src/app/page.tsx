@@ -5,31 +5,34 @@ import PaginationControls from '@/components/pagination-controls';
 import ToolList from '@/components/tool-list';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToolsQuery } from '@/hooks/useToolsQuery';
-import { parseAsInteger, parseAsString, useQueryState } from 'nuqs';
+import { createParser, parseAsInteger, parseAsString, parseAsStringEnum, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 
 // Define default limit outside component
 const DEFAULT_LIMIT = 12;
 
+// Custom parser for comma-separated tags
+const parseAsTags = createParser({
+  parse: (v: string) => v.split(',').filter(Boolean),
+  serialize: (v: string[]) => v.join(','),
+});
+
 // Wrapper component to allow Suspense for Nuqs parsers if needed
 function HomePageContent() {
   // Get filter/sort/page state from URL using Nuqs
   const [query] = useQueryState('q', parseAsString.withDefault(''));
-  const [tags] = useQueryState('tags', parseAsString.withDefault(''));
-  const [sortBy] = useQueryState('sort', parseAsString.withDefault('score'));
-  const [order] = useQueryState('order', parseAsString.withDefault('desc'));
+  const [tags] = useQueryState('tags', parseAsTags.withDefault([]));
+  const [sortBy] = useQueryState('sort', parseAsStringEnum(['score', 'stars', 'createdAt']).withDefault('score'));
+  const [order] = useQueryState('order', parseAsStringEnum(['asc', 'desc']).withDefault('desc'));
   const [page] = useQueryState('page', parseAsInteger.withDefault(1));
-  const [limit] = useQueryState('limit', parseAsInteger.withDefault(DEFAULT_LIMIT));
-
-  // Parse tags string to array
-  const parsedTags = tags ? tags.split(',').filter(Boolean) : [];
+  const [limit] = useQueryState('limit', parseAsInteger.withDefault(DEFAULT_LIMIT)); // Allow limit override via URL?
 
   // Fetch tools data using React Query, passing Nuqs state
   const { data: toolsData, pagination, isLoading, isFetching, isPlaceholderData } = useToolsQuery({
     query,
-    tags: parsedTags,
-    sortBy: sortBy as 'score' | 'stars' | 'createdAt',
-    order: order as 'asc' | 'desc',
+    tags,
+    sortBy,
+    order,
     page,
     limit,
   });
@@ -38,7 +41,7 @@ function HomePageContent() {
     <div className="space-y-8">
       {/* Header Text */}
       <div className="text-center">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
+        <h1 className="mb-2 font-bold text-3xl tracking-tight md:text-4xl">
           Find Open Source & Better Alternatives
         </h1>
         <p className="text-lg text-muted-foreground">
@@ -71,6 +74,7 @@ function HomePageContent() {
   );
 }
 
+
 // Main export using Suspense for Nuqs/Client Components
 export default function HomePage() {
   return (
@@ -84,20 +88,21 @@ export default function HomePage() {
 
 // Simple skeleton for the whole page during initial Suspense fallback
 function HomePageLoadingSkeleton() {
-  // Generate UUID-like string for each key
-  const generateId = () => Math.random().toString(36).substring(2, 9);
-  const skeletonIds = Array.from({ length: DEFAULT_LIMIT }, () => generateId());
-
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <Skeleton className="h-10 w-3/4 mx-auto mb-2" />
-        <Skeleton className="h-6 w-1/2 mx-auto" />
+        <Skeleton className="mx-auto mb-2 h-10 w-3/4" />
+        <Skeleton className="mx-auto h-6 w-1/2" />
       </div>
       <Skeleton className="h-32 w-full rounded-lg" /> {/* Filter skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {skeletonIds.map((id) => (
-          <Skeleton key={id} className="h-72 w-full rounded-lg" />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Pre-generate unique keys for static skeleton items */}
+        {[
+          'sk-card-1', 'sk-card-2', 'sk-card-3', 'sk-card-4',
+          'sk-card-5', 'sk-card-6', 'sk-card-7', 'sk-card-8',
+          'sk-card-9', 'sk-card-10', 'sk-card-11', 'sk-card-12'
+        ].slice(0, DEFAULT_LIMIT).map((key) => (
+          <Skeleton key={key} className="h-72 w-full rounded-lg" />
         ))}
       </div>
     </div>
