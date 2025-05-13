@@ -1,9 +1,11 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import {
 	AudioWaveform,
 	BookOpen,
 	Bot,
+	CheckCircle,
 	Command,
 	Frame,
 	GalleryVerticalEnd,
@@ -12,11 +14,9 @@ import {
 	Settings2,
 	SquareTerminal,
 	TrendingUp,
-	CheckCircle,
 } from "lucide-react";
-import type * as React from "react";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
+import type * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
@@ -170,11 +170,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				{/* App navigation links */}
 				<div className="mb-4 px-3 py-2">
-					<h2 className="font-semibold mb-2 text-sidebar-foreground/70 text-xs">Navigation</h2>
+					<h2 className="mb-2 font-semibold text-sidebar-foreground/70 text-xs">Navigation</h2>
 					<nav className="grid gap-1">
 						<Link
 							href="/trends"
-							className="flex group gap-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground items-center px-3 py-2 rounded-md text-sidebar-foreground text-sm"
+							className="group flex items-center gap-2 rounded-md px-3 py-2 text-sidebar-foreground text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
 						>
 							<TrendingUp className="h-4 w-4" />
 							<span>Trends</span>
@@ -182,7 +182,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						{isSignedIn && (
 							<Link
 								href="/tools/approve"
-								className="flex group gap-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground items-center px-3 py-2 rounded-md text-sidebar-foreground text-sm"
+								className="group flex items-center gap-2 rounded-md px-3 py-2 text-sidebar-foreground text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
 							>
 								<CheckCircle className="h-4 w-4" />
 								<span>Approve Tools</span>
