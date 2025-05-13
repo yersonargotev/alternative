@@ -5,10 +5,10 @@ import PaginationControls from "@/components/pagination-controls";
 import SuggestAlternativeDialog from "@/components/suggest-alternative-dialog";
 import ToolList from "@/components/tool-list";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToolsQuery } from "@/hooks/useToolsQuery";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { PlusCircle } from "lucide-react";
 import {
 	createParser,
@@ -65,60 +65,71 @@ function HomePageContent() {
 
 	return (
 		<SidebarInset>
-			<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-				<div className="flex items-center gap-2 px-4">
-					<SidebarTrigger className="-ml-1" />
+			{/* Header with sidebar trigger */}
+			<header className="flex h-16 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+				<div className="flex w-full items-center justify-between px-4">
+					<div className="flex items-center gap-2">
+						<SidebarTrigger className="-ml-1" />
+						<h2 className="font-semibold text-xl">FactuStorm</h2>
+					</div>
+
+					<div className="flex items-center gap-2">
+						<SignedIn>
+							{/* Generic suggest alternative dialog for the home page */}
+							<SuggestAlternativeDialog originalToolId={0} originalToolName="" />
+						</SignedIn>
+						<SignedOut>
+							<Button variant="outline" size="sm">
+								<SignInButton mode="modal">
+									<span className="flex items-center gap-1">
+										<PlusCircle className="h-4 w-4" />
+										Sign In
+									</span>
+								</SignInButton>
+							</Button>
+						</SignedOut>
+					</div>
 				</div>
 			</header>
-			<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-				<div className="space-y-8">
-			{/* Header Text */}
-			<div className="text-center">
-				<h1 className="mb-2 font-bold text-3xl tracking-tight md:text-4xl">
-					Find Open Source & Better Alternatives
-				</h1>
-				<p className="text-lg text-muted-foreground">
-					Discover community-curated and trending tools.
-				</p>
-				
-				{/* Add Suggest Alternative Button for logged-in users */}
-				<div className="mt-4 flex justify-center">
-					<SignedIn>
-						{/* Generic suggest alternative dialog for the home page */}
-						<SuggestAlternativeDialog originalToolId={0} originalToolName="" />
-					</SignedIn>
-					<SignedOut>
-						<Button variant="outline" onClick={() => {}}>
-							<PlusCircle className="mr-2 h-4 w-4" />
-							<SignInButton mode="modal">
-								<span>Sign in to suggest alternatives</span>
-							</SignInButton>
-						</Button>
-					</SignedOut>
+
+			{/* Main content area */}
+			<div className="flex flex-1 flex-col gap-6 p-6 pt-6">
+				{/* Hero Section */}
+				<section className="mx-auto max-w-5xl text-center">
+					<h1 className="mb-3 font-bold text-3xl tracking-tight md:text-4xl lg:text-5xl">
+						Find Open Source & Better Alternatives
+					</h1>
+					<p className="mb-6 text-lg text-muted-foreground md:text-xl">
+						Discover community-curated and trending tools.
+					</p>
+				</section>
+
+				{/* Filters and Search Section */}
+				<div className="mx-auto w-full max-w-5xl rounded-lg border bg-card p-4 shadow-sm">
+					<FiltersAndSearch />
 				</div>
-			</div>
 
-			{/* Filters and Search Section */}
-			<FiltersAndSearch />
+				{/* Tool List Section */}
+				<div className="mx-auto w-full max-w-6xl">
+					<ToolList
+						tools={toolsData}
+						isLoading={isLoading}
+						isFetching={isFetching}
+						limit={limit}
+					/>
 
-			{/* Tool List Section */}
-			<ToolList
-				tools={toolsData}
-				isLoading={isLoading}
-				isFetching={isFetching}
-				limit={limit}
-			/>
-
-			{/* Pagination Section */}
-			{pagination && pagination.totalCount > 0 && (
-				<PaginationControls
-					currentPage={pagination.page}
-					totalPages={pagination.totalPages}
-					totalCount={pagination.totalCount}
-					limit={pagination.limit}
-					isPlaceholderData={isPlaceholderData}
-				/>
-				)}
+					{/* Pagination Section */}
+					{pagination && pagination.totalCount > 0 && (
+						<div className="mt-8">
+							<PaginationControls
+								currentPage={pagination.page}
+								totalPages={pagination.totalPages}
+								totalCount={pagination.totalCount}
+								limit={pagination.limit}
+								isPlaceholderData={isPlaceholderData}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</SidebarInset>

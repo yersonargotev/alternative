@@ -31,8 +31,12 @@ export default function RootLayout({
 				className={cn(geistSans.variable, geistMono.variable, "antialiased")}
 			>
 				<Providers>
-					<AppSidebar />
-					{children}
+					<div className="row-span-2 flex">
+						<AppSidebar />
+						<main className="flex flex-1 overflow-auto">
+							<div className="grid flex-1">{children}</div>
+						</main>
+					</div>
 				</Providers>
 			</body>
 		</html>
