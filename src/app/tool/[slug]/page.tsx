@@ -155,7 +155,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
         <div className="space-y-8">
             {/* Tool Header */}
             <section>
-                <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-4">
+                <div className="mb-4 flex flex-col items-start justify-between gap-6 md:flex-row">
                     <div className="flex items-center gap-4">
                         <Image
                             src={getFaviconUrl(tool.websiteUrl)}
@@ -166,36 +166,36 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                             unoptimized
                         />
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+                            <h1 className="font-bold text-3xl tracking-tight md:text-4xl">
                                 {tool.name}
                             </h1>
-                            <p className="text-lg text-muted-foreground mt-1">
+                            <p className="mt-1 text-lg text-muted-foreground">
                                 {tool.description}
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground flex-shrink-0 mt-2 md:mt-0">
+                    <div className="mt-2 flex flex-shrink-0 items-center gap-4 text-muted-foreground text-sm md:mt-0">
                         <span className="flex items-center gap-1" title="GitHub Stars">
-                            <Star className="w-4 h-4 text-yellow-500" />{" "}
+                            <Star className="h-4 w-4 text-yellow-500" />{" "}
                             {formatNumber(tool.githubStars)}
                         </span>
                         <span className="flex items-center gap-1" title="GitHub Forks">
-                            <GitFork className="w-4 h-4" /> {formatNumber(tool.githubForks)}
+                            <GitFork className="h-4 w-4" /> {formatNumber(tool.githubForks)}
                         </span>
                         <span className="flex items-center gap-1" title="Open Issues">
-                            <MessageSquareWarning className="w-4 h-4" />{" "}
+                            <MessageSquareWarning className="h-4 w-4" />{" "}
                             {formatNumber(tool.githubIssues)}
                         </span>
                         <span
                             className="flex items-center gap-1 font-semibold text-primary"
                             title="User Votes"
                         >
-                            <ThumbsUp className="w-4 h-4 text-blue-500" />{" "}
+                            <ThumbsUp className="h-4 w-4 text-blue-500" />{" "}
                             {formatNumber(tool.userVotesCount)}
                         </span>
                     </div>
                 </div>
-                <div className="flex flex-wrap gap-3 items-center">
+                <div className="flex flex-wrap items-center gap-3">
                     {tool.websiteUrl && (
                         <Button variant="outline" size="sm" asChild>
                             <a
@@ -216,7 +216,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                     )}
                     {/* Vote Button Placeholder - Requires Client Component */}
                     <VoteButton toolId={tool.id} initialVotes={tool.userVotesCount} />
-                    <span className="text-lg font-bold text-primary ml-auto">
+                    <span className="ml-auto font-bold text-lg text-primary">
                         {tool.score?.toFixed(1)} Score
                     </span>
                 </div>
@@ -233,7 +233,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
 
             {/* Alternatives Section */}
             <section>
-                <h2 className="text-2xl font-semibold tracking-tight mb-4">
+                <h2 className="mb-4 font-semibold text-2xl tracking-tight">
                     Alternatives to {tool.name}
                 </h2>
                 {alternatives.length > 0 ? (
@@ -241,15 +241,15 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                         {alternatives.map((alt) => (
                             <Card
                                 key={alt.id}
-                                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 gap-4"
+                                className="flex flex-col items-start justify-between gap-4 p-4 sm:flex-row sm:items-center"
                             >
-                                <div className="flex items-center gap-3 flex-grow">
+                                <div className="flex flex-grow items-center gap-3">
                                     <Image
                                         src={getFaviconUrl(alt.websiteUrl)}
                                         alt={`${alt.name} favicon`}
                                         width={24}
                                         height={24}
-                                        className="rounded flex-shrink-0"
+                                        className="flex-shrink-0 rounded"
                                         unoptimized
                                     />
                                     <div>
@@ -259,24 +259,24 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                                         >
                                             {alt.name}
                                         </Link>
-                                        <p className="text-sm text-muted-foreground line-clamp-1">
+                                        <p className="line-clamp-1 text-muted-foreground text-sm">
                                             {alt.description}
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground flex-shrink-0 w-full sm:w-auto justify-end">
+                                <div className="flex w-full flex-shrink-0 items-center justify-end gap-4 text-muted-foreground text-sm sm:w-auto">
                                     <span
                                         className="flex items-center gap-1"
                                         title="GitHub Stars"
                                     >
-                                        <Star className="w-4 h-4 text-yellow-500" />{" "}
+                                        <Star className="h-4 w-4 text-yellow-500" />{" "}
                                         {formatNumber(alt.githubStars)}
                                     </span>
                                     <span className="flex items-center gap-1" title="User Votes">
-                                        <ThumbsUp className="w-4 h-4 text-blue-500" />{" "}
+                                        <ThumbsUp className="h-4 w-4 text-blue-500" />{" "}
                                         {formatNumber(alt.userVotesCount)}
                                     </span>
-                                    <span className="font-semibold text-primary w-16 text-right">
+                                    <span className="w-16 text-right font-semibold text-primary">
                                         {alt.score?.toFixed(1)} Score
                                     </span>
                                     <Button variant="secondary" size="sm" asChild>
@@ -303,22 +303,22 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                 <>
                     <Separator />
                     <section>
-                        <h2 className="text-2xl font-semibold tracking-tight mb-4">
+                        <h2 className="mb-4 font-semibold text-2xl tracking-tight">
                             {tool.name} is an alternative to:
                         </h2>
                         <div className="space-y-4">
                             {alternativeTo.map((orig) => (
                                 <Card
                                     key={orig.id}
-                                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 gap-4"
+                                    className="flex flex-col items-start justify-between gap-4 p-4 sm:flex-row sm:items-center"
                                 >
-                                    <div className="flex items-center gap-3 flex-grow">
+                                    <div className="flex flex-grow items-center gap-3">
                                         <Image
                                             src={getFaviconUrl(orig.websiteUrl)}
                                             alt={`${orig.name} favicon`}
                                             width={24}
                                             height={24}
-                                            className="rounded flex-shrink-0"
+                                            className="flex-shrink-0 rounded"
                                             unoptimized
                                         />
                                         <div>
@@ -328,27 +328,27 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
                                             >
                                                 {orig.name}
                                             </Link>
-                                            <p className="text-sm text-muted-foreground line-clamp-1">
+                                            <p className="line-clamp-1 text-muted-foreground text-sm">
                                                 {orig.description}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground flex-shrink-0 w-full sm:w-auto justify-end">
+                                    <div className="flex w-full flex-shrink-0 items-center justify-end gap-4 text-muted-foreground text-sm sm:w-auto">
                                         <span
                                             className="flex items-center gap-1"
                                             title="GitHub Stars"
                                         >
-                                            <Star className="w-4 h-4 text-yellow-500" />{" "}
+                                            <Star className="h-4 w-4 text-yellow-500" />{" "}
                                             {formatNumber(orig.githubStars)}
                                         </span>
                                         <span
                                             className="flex items-center gap-1"
                                             title="User Votes"
                                         >
-                                            <ThumbsUp className="w-4 h-4 text-blue-500" />{" "}
+                                            <ThumbsUp className="h-4 w-4 text-blue-500" />{" "}
                                             {formatNumber(orig.userVotesCount)}
                                         </span>
-                                        <span className="font-semibold text-primary w-16 text-right">
+                                        <span className="w-16 text-right font-semibold text-primary">
                                             {orig.score?.toFixed(1)} Score
                                         </span>
                                         <Button variant="secondary" size="sm" asChild>
