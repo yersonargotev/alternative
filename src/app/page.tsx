@@ -2,9 +2,13 @@
 
 import FiltersAndSearch from "@/components/filter-and-search";
 import PaginationControls from "@/components/pagination-controls";
+import SuggestAlternativeDialog from "@/components/suggest-alternative-dialog";
 import ToolList from "@/components/tool-list";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToolsQuery } from "@/hooks/useToolsQuery";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { PlusCircle } from "lucide-react";
 import {
 	createParser,
 	parseAsInteger,
@@ -68,6 +72,22 @@ function HomePageContent() {
 				<p className="text-lg text-muted-foreground">
 					Discover community-curated and trending tools.
 				</p>
+				
+				{/* Add Suggest Alternative Button for logged-in users */}
+				<div className="mt-4 flex justify-center">
+					<SignedIn>
+						{/* Generic suggest alternative dialog for the home page */}
+						<SuggestAlternativeDialog originalToolId={0} originalToolName="" />
+					</SignedIn>
+					<SignedOut>
+						<Button variant="outline" onClick={() => {}}>
+							<PlusCircle className="mr-2 h-4 w-4" />
+							<SignInButton mode="modal">
+								<span>Sign in to suggest alternatives</span>
+							</SignInButton>
+						</Button>
+					</SignedOut>
+				</div>
 			</div>
 
 			{/* Filters and Search Section */}

@@ -21,14 +21,16 @@ import { toast } from "sonner";
 // TODO: Integrate @tanstack/react-form and Zod schema validation
 
 interface SuggestAlternativeDialogProps {
-	originalToolId: number;
-	originalToolName: string;
+	originalToolId: number; // Can be 0 when used from home page
+	originalToolName: string; // Can be empty when used from home page
 }
 
 export default function SuggestAlternativeDialog({
 	originalToolId,
 	originalToolName,
 }: SuggestAlternativeDialogProps) {
+	// Determine if this is being used from the home page
+	const isFromHomePage = originalToolId === 0;
 	const { userId, isLoaded } = useAuth();
 	const [isOpen, setIsOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -69,12 +71,19 @@ export default function SuggestAlternativeDialog({
 		try {
 			// --- API Call Placeholder ---
 			// Replace with actual API call using react-query mutation in Part 7/9
-			console.log(`Suggesting alternative for tool ${originalToolId}:`, {
-				name,
-				repoUrl,
-				websiteUrl,
-				description,
-			});
+			console.log(
+				isFromHomePage
+					? "Registering new alternative tool:" 
+					: `Suggesting alternative for tool ${originalToolId}:`, 
+				{
+					name,
+					repoUrl,
+					websiteUrl,
+					description,
+					// Only include this field if we're suggesting an alternative to a specific tool
+					...(isFromHomePage ? {} : { alternativeToToolId: originalToolId }),
+				}
+			);
 			// const response = await fetch('/api/tools/suggest', { // Or a dedicated suggestion endpoint
 			//   method: 'POST',
 			//   headers: { 'Content-Type': 'application/json' },
@@ -94,9 +103,12 @@ export default function SuggestAlternativeDialog({
 			await new Promise((resolve) => setTimeout(resolve, 700)); // Simulate API call
 			// --- End API Call Placeholder ---
 
-			toast.success("Suggestion Submitted!", {
-				description: "Thank you! Your suggestion will be reviewed.",
-			});
+			toast.success(
+				isFromHomePage ? "Tool Registered!" : "Suggestion Submitted!", 
+				{
+					description: "Thank you! Your submission will be reviewed.",
+				}
+			);
 			setIsOpen(false); // Close dialog on success
 			// Reset form state
 			setName("");
@@ -119,15 +131,21 @@ export default function SuggestAlternativeDialog({
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<Button variant="outline">
-					<PlusCircle className="mr-2 h-4 w-4" /> Suggest an Alternative
+					<PlusCircle className="mr-2 h-4 w-4" /> 
+					{isFromHomePage ? "Register an Alternative" : "Suggest an Alternative"}
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[480px]">
 				<DialogHeader>
-					<DialogTitle>Suggest Alternative for {originalToolName}</DialogTitle>
+					<DialogTitle>
+						{isFromHomePage
+							? "Register an Alternative Tool"
+							: `Suggest Alternative for ${originalToolName}`}
+					</DialogTitle>
 					<DialogDescription>
-						Found another great tool? Fill in the details below. We'll review it
-						shortly.
+						{isFromHomePage
+							? "Know a great open source tool? Share it with the community."
+							: "Found another great tool? Fill in the details below. We'll review it shortly."}
 					</DialogDescription>
 				</DialogHeader>
 				<form onSubmit={handleSubmit}>
