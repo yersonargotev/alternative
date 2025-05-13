@@ -70,7 +70,7 @@ function HomePageContent() {
 				<div className="flex w-full items-center justify-between px-4">
 					<div className="flex items-center gap-2">
 						<SidebarTrigger className="-ml-1" />
-						<h2 className="font-semibold text-xl">FactuStorm</h2>
+						<h2 className="font-semibold text-xl">Tool Alternatives</h2>
 					</div>
 
 					<div className="flex items-center gap-2">

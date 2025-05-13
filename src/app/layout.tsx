@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "FactuStorm",
-	description: "FactuStorm",
+	title: "Tool Alternatives",
+	description: "Discover open-source tools and alternatives.",
 };
 
 export default function RootLayout({
