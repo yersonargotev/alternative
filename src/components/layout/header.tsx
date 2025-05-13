@@ -19,10 +19,16 @@ export default function Header() {
 						</span>
 					</Link>
 					<nav className="flex items-center space-x-6 font-medium text-sm">
-						{/* Add Nav Links here if needed */}
-						{/* <Link href="/trends" className="transition-colors hover:text-foreground/80 text-foreground/60">
+						{/* Navigation links */}
+						<Link href="/trends" className="text-foreground/60 transition-colors hover:text-foreground/80">
               Trends
-            </Link> */}
+            </Link>
+						{/* Only show Approve Tools link for authenticated users */}
+						{isSignedIn && (
+							<Link href="/tools/approve" className="text-foreground/60 transition-colors hover:text-foreground/80">
+								Approve Tools
+							</Link>
+						)}
 					</nav>
 				</div>
 				{/* Mobile Nav Placeholder */}
@@ -31,7 +37,7 @@ export default function Header() {
 				<div className="flex flex-1 items-center justify-end space-x-4">
 					<nav className="flex items-center space-x-2">
 						{userId ? (
-							<UserButton afterSignOutUrl="/" />
+							<UserButton />
 						) : (
 							<>
 								<SignInButton mode="modal">

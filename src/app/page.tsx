@@ -6,6 +6,7 @@ import SuggestAlternativeDialog from "@/components/suggest-alternative-dialog";
 import ToolList from "@/components/tool-list";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useToolsQuery } from "@/hooks/useToolsQuery";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { PlusCircle } from "lucide-react";
@@ -63,7 +64,14 @@ function HomePageContent() {
 	});
 
 	return (
-		<div className="space-y-8">
+		<SidebarInset>
+			<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+				<div className="flex items-center gap-2 px-4">
+					<SidebarTrigger className="-ml-1" />
+				</div>
+			</header>
+			<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+				<div className="space-y-8">
 			{/* Header Text */}
 			<div className="text-center">
 				<h1 className="mb-2 font-bold text-3xl tracking-tight md:text-4xl">
@@ -110,8 +118,10 @@ function HomePageContent() {
 					limit={pagination.limit}
 					isPlaceholderData={isPlaceholderData}
 				/>
-			)}
-		</div>
+				)}
+				</div>
+			</div>
+		</SidebarInset>
 	);
 }
 
