@@ -10,12 +10,19 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 // TODO: Integrate @tanstack/react-form and Zod schema validation
@@ -40,7 +47,41 @@ export default function SuggestAlternativeDialog({
 	const [repoUrl, setRepoUrl] = useState("");
 	const [websiteUrl, setWebsiteUrl] = useState("");
 	const [description, setDescription] = useState("");
+	const [alternativeToToolId, setAlternativeToToolId] = useState<number | null>(null);
+	const [alternativeToCustomName, setAlternativeToCustomName] = useState("");
+	const [useCustomAlternative, setUseCustomAlternative] = useState(false);
+	const [availableTools, setAvailableTools] = useState<{id: number, name: string}[]>([]);
 	// Add state for tags if needed
+	
+	// Fetch available tools for the dropdown
+	useEffect(() => {
+		const fetchTools = async () => {
+			try {
+				const response = await fetch('/api/tools?limit=50');
+				if (response.ok) {
+					const data = await response.json();
+					setAvailableTools(data.tools.map((tool: { id: number; name: string }) => ({
+						id: tool.id,
+						name: tool.name
+					})));
+				}
+			} catch (error) {
+				console.error("Error fetching tools:", error);
+			}
+		};
+		
+		// Only fetch if dialog is open
+		if (isOpen && isFromHomePage) {
+			fetchTools();
+		}
+	}, [isOpen, isFromHomePage]);
+	
+	// Set the alternativeToToolId if provided via props
+	useEffect(() => {
+		if (originalToolId > 0) {
+			setAlternativeToToolId(originalToolId);
+		}
+	}, [originalToolId]);
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -69,39 +110,36 @@ export default function SuggestAlternativeDialog({
 		// --- End Validation Placeholder ---
 
 		try {
-			// --- API Call Placeholder ---
-			// Replace with actual API call using react-query mutation in Part 7/9
+			// --- Make the actual API call ---
+			const suggestionData = {
+				name,
+				repoUrl,
+				websiteUrl,
+				description,
+				// Include alternativeToToolId if it's set, or alternativeToCustomName if using custom
+				...(alternativeToToolId ? { alternativeToToolId } : {}),
+				...(useCustomAlternative && alternativeToCustomName ? { alternativeToCustomName } : {}),
+			};
+			
 			console.log(
 				isFromHomePage
 					? "Registering new alternative tool:" 
 					: `Suggesting alternative for tool ${originalToolId}:`, 
-				{
-					name,
-					repoUrl,
-					websiteUrl,
-					description,
-					// Only include this field if we're suggesting an alternative to a specific tool
-					...(isFromHomePage ? {} : { alternativeToToolId: originalToolId }),
-				}
+				suggestionData
 			);
-			// const response = await fetch('/api/tools/suggest', { // Or a dedicated suggestion endpoint
-			//   method: 'POST',
-			//   headers: { 'Content-Type': 'application/json' },
-			//   body: JSON.stringify({
-			//       name,
-			//       repoUrl,
-			//       websiteUrl,
-			//       description,
-			//       // tags,
-			//       alternativeToToolId: originalToolId,
-			//    }),
-			// });
-			// if (!response.ok) {
-			//   const errorData = await response.json();
-			//   throw new Error(errorData.message || 'Failed to submit suggestion');
-			// }
-			await new Promise((resolve) => setTimeout(resolve, 700)); // Simulate API call
-			// --- End API Call Placeholder ---
+			
+			const response = await fetch('/api/tools/suggest', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(suggestionData),
+			});
+			
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Failed to submit suggestion');
+			}
+			
+			const result = await response.json();
 
 			toast.success(
 				isFromHomePage ? "Tool Registered!" : "Suggestion Submitted!", 
@@ -115,6 +153,9 @@ export default function SuggestAlternativeDialog({
 			setRepoUrl("");
 			setWebsiteUrl("");
 			setDescription("");
+			setAlternativeToToolId(null);
+			setAlternativeToCustomName("");
+			setUseCustomAlternative(false);
 			// Optionally refresh data or show pending state
 			// router.refresh();
 		} catch (error) {
@@ -175,6 +216,78 @@ export default function SuggestAlternativeDialog({
 								required
 							/>
 						</div>
+						{isFromHomePage && (
+						<>
+							<div className="grid grid-cols-4 items-center gap-4">
+								<Label className="text-right">
+									Alternative Type
+								</Label>
+								<div className="col-span-3 flex gap-4">
+									<Button 
+										type="button"
+										variant={!useCustomAlternative ? "default" : "outline"}
+										size="sm"
+										onClick={() => setUseCustomAlternative(false)}
+									>
+										Existing Tool
+									</Button>
+									<Button 
+										type="button"
+										variant={useCustomAlternative ? "default" : "outline"}
+										size="sm"
+										onClick={() => setUseCustomAlternative(true)}
+									>
+										New Alternative
+									</Button>
+								</div>
+							</div>
+
+							{!useCustomAlternative ? (
+								<div className="grid grid-cols-4 items-center gap-4">
+									<Label htmlFor="alternativeTo" className="text-right">
+										Alternative To
+									</Label>
+									<div className="col-span-3">
+										<Select
+											value={alternativeToToolId?.toString() || "none"}
+											onValueChange={(value) => setAlternativeToToolId(value && value !== "none" ? Number.parseInt(value, 10) : null)}
+										>
+											<SelectTrigger>
+												<SelectValue placeholder="Select a tool (optional)" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="none">None</SelectItem>
+												{availableTools.map((tool) => (
+													<SelectItem key={tool.id} value={tool.id.toString()}>
+														{tool.name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{availableTools.length === 0 && (
+											<p className="text-xs text-muted-foreground mt-1">
+												No tools available. Try entering a custom alternative name.
+											</p>
+										)}
+									</div>
+								</div>
+							) : (
+								<div className="grid grid-cols-4 items-center gap-4">
+									<Label htmlFor="customAlternative" className="text-right">
+										Alternative To
+									</Label>
+									<div className="col-span-3">
+										<Input
+											id="customAlternative"
+											value={alternativeToCustomName}
+											onChange={(e) => setAlternativeToCustomName(e.target.value)}
+											placeholder="Enter tool name (e.g., 'Visual Studio Code')"
+										/>
+									</div>
+								</div>
+							)}
+						</>
+					)}
 						<div className="grid grid-cols-4 items-center gap-4">
 							<Label htmlFor="websiteUrl" className="text-right">
 								Website
