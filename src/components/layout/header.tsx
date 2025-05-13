@@ -4,9 +4,32 @@ import { Button } from "@/components/ui/button";
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Header() {
 	const { userId, isSignedIn } = useAuth(); // Get user auth state client-side
+	const [isUserAdmin, setIsUserAdmin] = useState(false);
+
+	// Check if user is admin on component mount using API endpoint
+	useEffect(() => {
+		async function checkAdminStatus() {
+			if (isSignedIn) {
+				try {
+					const response = await fetch("/api/admin/check");
+					if (response.ok) {
+						const data = await response.json();
+						setIsUserAdmin(data.isAdmin);
+					}
+				} catch (error) {
+					console.error("Error checking admin status:", error);
+				}
+			} else {
+				setIsUserAdmin(false);
+			}
+		}
+
+		checkAdminStatus();
+	}, [isSignedIn]);
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -21,10 +44,10 @@ export default function Header() {
 					<nav className="flex items-center space-x-6 font-medium text-sm">
 						{/* Navigation links */}
 						<Link href="/trends" className="text-foreground/60 transition-colors hover:text-foreground/80">
-              Trends
-            </Link>
-						{/* Only show Approve Tools link for authenticated users */}
-						{isSignedIn && (
+							Trends
+						</Link>
+						{/* Solo mostrar el enlace "Approve Tools" para administradores */}
+						{isUserAdmin && (
 							<Link href="/tools/approve" className="text-foreground/60 transition-colors hover:text-foreground/80">
 								Approve Tools
 							</Link>

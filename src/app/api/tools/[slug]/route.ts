@@ -1,8 +1,8 @@
 import { db } from "@/db";
 import { tools } from "@/db/schema";
+import { isAdmin } from "@/lib/check-admin";
 import { getToolDetailsBySlug } from "@/lib/data/tools";
 import { updateToolSchema } from "@/schemas";
-import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
@@ -14,7 +14,10 @@ type RouteParams = { slug: string };
  * GET endpoint to fetch tool details by slug
  * This is a public endpoint that doesn't require authentication
  */
-export async function GET(request: Request, { params }: { params: Promise<RouteParams> }) {
+export async function GET(
+	request: Request,
+	{ params }: { params: Promise<RouteParams> },
+) {
 	let slug = "";
 	try {
 		const paramsData = await params;
@@ -38,33 +41,12 @@ export async function GET(request: Request, { params }: { params: Promise<RouteP
 
 		return NextResponse.json(toolDetails);
 	} catch (error) {
-		console.error(
-			`[API_TOOLS_SLUG_GET] Error fetching tool ${slug}:`,
-			error,
-		);
+		console.error(`[API_TOOLS_SLUG_GET] Error fetching tool ${slug}:`, error);
 		return NextResponse.json(
 			{ message: "Internal Server Error" },
 			{ status: 500 },
 		);
 	}
-}
-
-/**
- * Check if the current user is an admin
- * This is a helper function to verify admin status
- */
-async function isAdmin() {
-	const { userId } = await auth();
-
-	if (!userId) {
-		return false;
-	}
-
-	// In a real application, you would check if the user has admin privileges
-	// This could be done by checking a role in your database or using Clerk's organization roles
-	// For now, we'll use a simple check with environment variables for authorized admin IDs
-	const adminIds = process.env.ADMIN_USER_IDS?.split(",") || [];
-	return adminIds.includes(userId);
 }
 
 /**
@@ -138,10 +120,7 @@ export async function PATCH(
 			throw error;
 		}
 	} catch (error) {
-		console.error(
-			`[API_TOOLS_SLUG_PATCH] Error updating tool ${slug}:`,
-			error,
-		);
+		console.error(`[API_TOOLS_SLUG_PATCH] Error updating tool ${slug}:`, error);
 		return NextResponse.json(
 			{ message: "Internal Server Error" },
 			{ status: 500 },

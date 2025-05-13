@@ -1,12 +1,34 @@
 "use client";
 
-
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Footer() {
 	const currentYear = new Date().getFullYear();
 	const { isSignedIn } = useAuth(); // Get user auth state client-side
+	const [isUserAdmin, setIsUserAdmin] = useState(false);
+
+	// Check if user is admin on component mount using API endpoint
+	useEffect(() => {
+		async function checkAdminStatus() {
+			if (isSignedIn) {
+				try {
+					const response = await fetch("/api/admin/check");
+					if (response.ok) {
+						const data = await response.json();
+						setIsUserAdmin(data.isAdmin);
+					}
+				} catch (error) {
+					console.error("Error checking admin status:", error);
+				}
+			} else {
+				setIsUserAdmin(false);
+			}
+		}
+
+		checkAdminStatus();
+	}, [isSignedIn]);
 
 	return (
 		<footer className="border-t">
@@ -50,8 +72,8 @@ export default function Footer() {
 					>
 						Trends
 					</Link>
-					{/* Only show Approve Tools link for authenticated users */}
-					{isSignedIn && (
+					{/* Solo mostrar el enlace "Approve Tools" para administradores */}
+					{isUserAdmin && (
 						<Link
 							href="/tools/approve"
 							className="text-foreground/60 transition-colors hover:text-foreground/80"

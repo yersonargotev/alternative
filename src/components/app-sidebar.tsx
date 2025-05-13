@@ -1,6 +1,7 @@
 "use client";
 
 import { NavUser } from "@/components/nav-user";
+import { ToolSwitcher } from "@/components/tool-switcher";
 import {
 	Sidebar,
 	SidebarContent,
@@ -14,11 +15,33 @@ import {
 import { useAuth } from "@clerk/nextjs";
 import { CheckCircle, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import type * as React from "react";
-import { ToolSwitcher } from "@/components/tool-switcher";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { isSignedIn } = useAuth(); // Get user auth state client-side
+	const [isUserAdmin, setIsUserAdmin] = useState(false);
+
+	// Check if user is admin on component mount using API endpoint
+	useEffect(() => {
+		async function checkAdminStatus() {
+			if (isSignedIn) {
+				try {
+					const response = await fetch("/api/admin/check");
+					if (response.ok) {
+						const data = await response.json();
+						setIsUserAdmin(data.isAdmin);
+					}
+				} catch (error) {
+					console.error("Error checking admin status:", error);
+				}
+			} else {
+				setIsUserAdmin(false);
+			}
+		}
+
+		checkAdminStatus();
+	}, [isSignedIn]);
 
 	return (
 		<Sidebar
@@ -45,7 +68,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 
-						{isSignedIn && (
+						{/* Solo mostrar "Approve Tools" si el usuario es administrador */}
+						{isUserAdmin && (
 							<SidebarMenuItem className="data-[collapsed=true]:flex data-[collapsed=true]:justify-center">
 								<SidebarMenuButton asChild tooltip="Approve Tools">
 									<Link
