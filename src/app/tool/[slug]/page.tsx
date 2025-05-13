@@ -217,7 +217,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
 					{/* Vote Button Placeholder - Requires Client Component */}
 					<VoteButton toolId={tool.id} initialVotes={tool.userVotesCount} />
 					<span className="ml-auto font-bold text-lg text-primary">
-						{tool.score?.toFixed(1)} Score
+						{typeof tool.score === 'number' ? tool.score.toFixed(1) : 'N/A'} Score
 					</span>
 				</div>
 				<div className="mt-4 flex flex-wrap gap-2">
@@ -277,7 +277,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
 										{formatNumber(alt.userVotesCount)}
 									</span>
 									<span className="w-16 text-right font-semibold text-primary">
-										{alt.score?.toFixed(1)} Score
+										{typeof alt.score === 'number' ? alt.score.toFixed(1) : 'N/A'} Score
 									</span>
 									<Button variant="secondary" size="sm" asChild>
 										<Link href={`/tool/${alt.slug}`}>View</Link>
@@ -349,7 +349,7 @@ export default async function ToolDetailPage({ params }: ToolPageProps) {
 											{formatNumber(orig.userVotesCount)}
 										</span>
 										<span className="w-16 text-right font-semibold text-primary">
-											{orig.score?.toFixed(1)} Score
+											{typeof orig.score === 'number' ? orig.score.toFixed(1) : 'N/A'} Score
 										</span>
 										<Button variant="secondary" size="sm" asChild>
 											<Link href={`/tool/${orig.slug}`}>View</Link>

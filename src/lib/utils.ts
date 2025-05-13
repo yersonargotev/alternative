@@ -10,18 +10,25 @@ export function calculateScore(
 	githubStars: number | null | undefined,
 	userVotes: number,
 ): number {
-	const stars = githubStars ?? 0;
-	// Simple weighted score for now
-	// Adjust weights (80/20) and scaling as needed
-	const githubWeight = 0.8;
-	const userVoteWeight = 0.2;
+	try {
+		const stars = githubStars ?? 0;
+		// Simple weighted score for now
+		// Adjust weights (80/20) and scaling as needed
+		const githubWeight = 0.8;
+		const userVoteWeight = 0.2;
 
-	// Normalize stars somewhat arbitrarily for now, e.g., log scale or cap
-	const normalizedStars = Math.log10(stars + 1); // Add 1 to avoid log(0)
+		// Normalize stars somewhat arbitrarily for now, e.g., log scale or cap
+		const normalizedStars = Math.log10(stars + 1); // Add 1 to avoid log(0)
 
-	// User votes contribute directly but scaled
-	const score = normalizedStars * githubWeight + userVotes * userVoteWeight;
-	return Number.parseFloat(score.toFixed(2)); // Return score rounded to 2 decimal places
+		// User votes contribute directly but scaled
+		const score = normalizedStars * githubWeight + userVotes * userVoteWeight;
+		// Parse and ensure it's a valid number, default to 0 if NaN or Infinity
+		const parsedScore = Number.parseFloat(score.toFixed(2));
+		return Number.isFinite(parsedScore) ? parsedScore : 0;
+	} catch (error) {
+		console.error("Error calculating score:", error);
+		return 0; // Return a safe default value on error
+	}
 }
 
 // Helper to format numbers (e.g., for stars)

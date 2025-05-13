@@ -120,7 +120,7 @@ export default function ToolList({
 								</span>
 							</div>
 							<span className="font-semibold text-primary">
-								{tool.score?.toFixed(1)} Score
+								{typeof tool.score === 'number' ? tool.score.toFixed(1) : 'N/A'} Score
 							</span>
 						</div>
 					</CardContent>
