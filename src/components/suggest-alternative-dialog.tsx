@@ -10,6 +10,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -17,12 +19,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
 import { PlusCircle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 // TODO: Integrate @tanstack/react-form and Zod schema validation
@@ -50,9 +50,9 @@ export default function SuggestAlternativeDialog({
 	const [alternativeToToolId, setAlternativeToToolId] = useState<number | null>(null);
 	const [alternativeToCustomName, setAlternativeToCustomName] = useState("");
 	const [useCustomAlternative, setUseCustomAlternative] = useState(false);
-	const [availableTools, setAvailableTools] = useState<{id: number, name: string}[]>([]);
+	const [availableTools, setAvailableTools] = useState<{ id: number, name: string }[]>([]);
 	// Add state for tags if needed
-	
+
 	// Fetch available tools for the dropdown
 	useEffect(() => {
 		const fetchTools = async () => {
@@ -69,13 +69,13 @@ export default function SuggestAlternativeDialog({
 				console.error("Error fetching tools:", error);
 			}
 		};
-		
+
 		// Only fetch if dialog is open
 		if (isOpen && isFromHomePage) {
 			fetchTools();
 		}
 	}, [isOpen, isFromHomePage]);
-	
+
 	// Set the alternativeToToolId if provided via props
 	useEffect(() => {
 		if (originalToolId > 0) {
@@ -120,29 +120,29 @@ export default function SuggestAlternativeDialog({
 				...(alternativeToToolId ? { alternativeToToolId } : {}),
 				...(useCustomAlternative && alternativeToCustomName ? { alternativeToCustomName } : {}),
 			};
-			
+
 			console.log(
 				isFromHomePage
-					? "Registering new alternative tool:" 
-					: `Suggesting alternative for tool ${originalToolId}:`, 
+					? "Registering new alternative tool:"
+					: `Suggesting alternative for tool ${originalToolId}:`,
 				suggestionData
 			);
-			
+
 			const response = await fetch('/api/tools/suggest', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(suggestionData),
 			});
-			
+
 			if (!response.ok) {
 				const errorData = await response.json();
 				throw new Error(errorData.message || 'Failed to submit suggestion');
 			}
-			
+
 			const result = await response.json();
 
 			toast.success(
-				isFromHomePage ? "Tool Registered!" : "Suggestion Submitted!", 
+				isFromHomePage ? "Tool Registered!" : "Suggestion Submitted!",
 				{
 					description: "Thank you! Your submission will be reviewed.",
 				}
@@ -172,7 +172,7 @@ export default function SuggestAlternativeDialog({
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
 				<Button variant="outline">
-					<PlusCircle className="mr-2 h-4 w-4" /> 
+					<PlusCircle className="mr-2 h-4 w-4" />
 					{isFromHomePage ? "Register an Alternative" : "Suggest an Alternative"}
 				</Button>
 			</DialogTrigger>
@@ -217,77 +217,77 @@ export default function SuggestAlternativeDialog({
 							/>
 						</div>
 						{isFromHomePage && (
-						<>
-							<div className="grid grid-cols-4 items-center gap-4">
-								<Label className="text-right">
-									Alternative Type
-								</Label>
-								<div className="col-span-3 flex gap-4">
-									<Button 
-										type="button"
-										variant={!useCustomAlternative ? "default" : "outline"}
-										size="sm"
-										onClick={() => setUseCustomAlternative(false)}
-									>
-										Existing Tool
-									</Button>
-									<Button 
-										type="button"
-										variant={useCustomAlternative ? "default" : "outline"}
-										size="sm"
-										onClick={() => setUseCustomAlternative(true)}
-									>
-										New Alternative
-									</Button>
-								</div>
-							</div>
-
-							{!useCustomAlternative ? (
+							<>
 								<div className="grid grid-cols-4 items-center gap-4">
-									<Label htmlFor="alternativeTo" className="text-right">
-										Alternative To
+									<Label className="text-right">
+										Alternative Type
 									</Label>
-									<div className="col-span-3">
-										<Select
-											value={alternativeToToolId?.toString() || "none"}
-											onValueChange={(value) => setAlternativeToToolId(value && value !== "none" ? Number.parseInt(value, 10) : null)}
+									<div className="col-span-3 flex gap-4">
+										<Button
+											type="button"
+											variant={!useCustomAlternative ? "default" : "outline"}
+											size="sm"
+											onClick={() => setUseCustomAlternative(false)}
 										>
-											<SelectTrigger>
-												<SelectValue placeholder="Select a tool (optional)" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="none">None</SelectItem>
-												{availableTools.map((tool) => (
-													<SelectItem key={tool.id} value={tool.id.toString()}>
-														{tool.name}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										{availableTools.length === 0 && (
-											<p className="text-xs text-muted-foreground mt-1">
-												No tools available. Try entering a custom alternative name.
-											</p>
-										)}
+											Existing Tool
+										</Button>
+										<Button
+											type="button"
+											variant={useCustomAlternative ? "default" : "outline"}
+											size="sm"
+											onClick={() => setUseCustomAlternative(true)}
+										>
+											New Alternative
+										</Button>
 									</div>
 								</div>
-							) : (
-								<div className="grid grid-cols-4 items-center gap-4">
-									<Label htmlFor="customAlternative" className="text-right">
-										Alternative To
-									</Label>
-									<div className="col-span-3">
-										<Input
-											id="customAlternative"
-											value={alternativeToCustomName}
-											onChange={(e) => setAlternativeToCustomName(e.target.value)}
-											placeholder="Enter tool name (e.g., 'Visual Studio Code')"
-										/>
+
+								{!useCustomAlternative ? (
+									<div className="grid grid-cols-4 items-center gap-4">
+										<Label htmlFor="alternativeTo" className="text-right">
+											Alternative To
+										</Label>
+										<div className="col-span-3">
+											<Select
+												value={alternativeToToolId?.toString() || "none"}
+												onValueChange={(value) => setAlternativeToToolId(value && value !== "none" ? Number.parseInt(value, 10) : null)}
+											>
+												<SelectTrigger>
+													<SelectValue placeholder="Select a tool (optional)" />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="none">None</SelectItem>
+													{availableTools.map((tool) => (
+														<SelectItem key={tool.id} value={tool.id.toString()}>
+															{tool.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											{availableTools.length === 0 && (
+												<p className="mt-1 text-muted-foreground text-xs">
+													No tools available. Try entering a custom alternative name.
+												</p>
+											)}
+										</div>
 									</div>
-								</div>
-							)}
-						</>
-					)}
+								) : (
+									<div className="grid grid-cols-4 items-center gap-4">
+										<Label htmlFor="customAlternative" className="text-right">
+											Alternative To
+										</Label>
+										<div className="col-span-3">
+											<Input
+												id="customAlternative"
+												value={alternativeToCustomName}
+												onChange={(e) => setAlternativeToCustomName(e.target.value)}
+												placeholder="Enter tool name (e.g., 'Visual Studio Code')"
+											/>
+										</div>
+									</div>
+								)}
+							</>
+						)}
 						<div className="grid grid-cols-4 items-center gap-4">
 							<Label htmlFor="websiteUrl" className="text-right">
 								Website
