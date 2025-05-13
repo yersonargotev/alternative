@@ -49,11 +49,11 @@ export const tools = pgTable(
 		),
 		submittedByUserId: varchar("submitted_by_user_id", { length: 191 }), // Clerk User ID (optional)
 	},
-	(table) => ({
-		slugIndex: uniqueIndex("slug_idx").on(table.slug),
-		statusIndex: index("status_idx").on(table.status),
-		repoUrlIndex: index("repo_url_idx").on(table.repoUrl), // Useful for finding tools by repo
-	}),
+	(table) => [
+		uniqueIndex("slug_idx").on(table.slug),
+		index("status_idx").on(table.status),
+		index("repo_url_idx").on(table.repoUrl), // Useful for finding tools by repo
+	],
 );
 
 // --- Tool Alternatives Relationship Table (Many-to-Many) ---
@@ -72,15 +72,15 @@ export const toolAlternatives = pgTable(
 		// Optional: addedByUserId if tracking who suggested the link
 		// addedByUserId: varchar('added_by_user_id', { length: 191 }),
 	},
-	(table) => ({
-		pk: primaryKey({
+	(table) => [
+		primaryKey({
 			columns: [table.originalToolId, table.alternativeToolId],
 		}),
-		originalToolIdx: index("original_tool_idx").on(table.originalToolId),
-		alternativeToolIdx: index("alternative_tool_idx").on(
+		index("original_tool_idx").on(table.originalToolId),
+		index("alternative_tool_idx").on(
 			table.alternativeToolId,
 		),
-	}),
+	],
 );
 
 // --- Votes Table ---
@@ -96,14 +96,14 @@ export const votes = pgTable(
 			.defaultNow()
 			.notNull(),
 	},
-	(table) => ({
-		userToolUnique: unique("user_tool_vote_unique").on(
+	(table) => [
+		unique("user_tool_vote_unique").on(
 			table.userId,
 			table.toolId,
 		), // User can only vote once per tool
-		toolIdIndex: index("vote_tool_id_idx").on(table.toolId),
-		userIdIndex: index("vote_user_id_idx").on(table.userId),
-	}),
+		index("vote_tool_id_idx").on(table.toolId),
+		index("vote_user_id_idx").on(table.userId),
+	],
 );
 
 // --- Drizzle Relations ---
@@ -166,9 +166,9 @@ export const users = pgTable(
 		),
 		lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 	},
-	(table) => ({
-		emailIndex: index("email_idx").on(table.email),
-	}),
+	(table) => [
+		index("email_idx").on(table.email),
+	],
 );
 
 // --- Users Relations ---
