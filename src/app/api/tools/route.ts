@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 		const limit = params.limit ?? 12;
 
 		return NextResponse.json({
-			data: tools,
+			tools, // Return tools array directly with this key for client-side consumption
 			pagination: {
 				page: params.page,
 				limit,
